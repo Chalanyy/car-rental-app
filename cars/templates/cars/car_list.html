@@ -1,0 +1,24 @@
+{% extends 'cars/base.html' %}
+
+{% block title %}GoRydz - Available Cars{% endblock %}
+{% block page_title %}Cars{% endblock %}
+
+{% block content %}
+<div class="car-grid">
+    {% for car in cars %}
+    <div class="car-card" onclick="location.href='{% url 'cars:car_detail' car.id %}'">
+        <div class="car-image">
+            <img src="{{ car.main_image.url }}" alt="{{ car.name }}">
+        </div>
+        <div class="car-info">
+            <div class="car-name">{{ car.brand }} {{ car.name }}</div>
+            <div class="car-price">${{ car.price_per_day }}/day</div>
+        </div>
+    </div>
+    {% empty %}
+    <div style="text-align: center; color: rgba(255,255,255,0.7); font-size: 18px; grid-column: 1/-1;">
+        <p>No cars available at the moment.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

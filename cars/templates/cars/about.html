@@ -1,0 +1,69 @@
+<!-- templates/cars/about.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Car Rental</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .car-image {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
+        }
+        
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Logo -->
+        <img src="{% static 'media/car.jpg' %}" alt="GoRydz" class="logo">
+        
+        <h1>About Us</h1>
+        
+        <!-- Main car image -->
+        <img src="{% static 'media/car.jpg' %}" alt="Premium Car" class="car-image">
+        
+        <h2>Why Choose Us</h2>
+        <p>We offer a wide selection of reliable and affordable cars to suit your needs. 
+           Whether you're planning a family trip or a business commute, our easy-to-use 
+           booking system, transparent pricing, and excellent customer service make your 
+           rental experience seamless and stress-free.</p>
+    </div>
+</body>
+</html>

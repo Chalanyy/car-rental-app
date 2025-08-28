@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GoRydz - Car Rental{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(8, 0, 0, 0.9);
+            padding: 30px 0;
+            border-bottom: 2px solid #f4f9faff;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Menu Icon and Dropdown Styles */
+        .menu-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-icon {
+            width: 30px;
+            height: 20px;
+            position: relative;
+            margin-right: 15px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-icon span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: #f8fbfcff;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+
+        /* Menu Icon Animation */
+        .menu-container.active .menu-icon span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .menu-container.active .menu-icon span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-container.active .menu-icon span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Dropdown Menu */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #00bcd4;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-top: 10px;
+        }
+
+        .menu-container.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .dropdown-menu a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-menu a:hover {
+            background: rgba(0, 188, 212, 0.2);
+            color: #00bcd4;
+            padding-left: 25px;
+        }
+
+        .dropdown-menu a:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .dropdown-menu a:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* Menu icons for each item */
+        .menu-item-icon {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .car-card {
+            background: rgba(7, 0, 0, 1);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .car-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(246, 249, 249, 0.3);
+        }
+
+        .car-image {
+            width: 100%;
+            height: 200px;
+            background: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .car-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .car-info {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .car-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .car-price {
+            color: #f0f6f7ff;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #00bcd4, #0097a7);
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 25px;
+            display: inline-block;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #0097a7, #00695c);
+            transform: scale(1.05);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .detail-images {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .thumbnail-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.1);
+        }
+
+        .detail-info {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        .detail-info h2 {
+            color: #000b0cff;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .detail-info h3 {
+            color: #010c0dff;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .form-container {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #010d0eff;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00bcd4;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .booking-summary {
+            background: rgba(0, 188, 212, 0.1);
+            border: 2px solid #00bcd4;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .booking-summary h3 {
+            color: #00bcd4;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px 0;
+        }
+
+        .total-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00bcd4;
+            border-top: 2px solid #00bcd4;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .messages {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4caf50;
+            color: #4caf50;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: rgba(8, 0, 0, 0.95);
+            margin-top: 60px;
+            padding: 50px 0 30px 0;
+            border-top: 2px solid #f4f9faff;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .footer-section h3 {
+            color: #00bcd4;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .footer-section p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .contact-info {
+            list-style: none;
+            padding: 0;
+        }
+
+        .contact-info li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+        }
+
+        .contact-info i {
+            margin-right: 12px;
+            width: 20px;
+            color: #00bcd4;
+        }
+
+        .contact-info a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-info a:hover {
+            color: #00bcd4;
+        }
+
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features-list li {
+            padding: 8px 0;
+            color: rgba(255, 255, 255, 0.8);
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .features-list li:before {
+            content: "✓";
+            color: #00bcd4;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Close menu when clicking outside */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+            display: none;
+        }
+
+        .menu-container.active + .menu-overlay {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .car-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .page-title {
+                margin-top: 10px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .dropdown-menu {
+                min-width: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="{% url 'cars:car_list' %}" class="logo">
+                <div class="menu-container" id="menuContainer">
+                    <div class="menu-icon" id="menuIcon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="{% url 'cars:car_list' %}">
+                            <span class="menu-item-icon">🏠</span>Home
+                        </a>
+                        <a href="/about/">
+                            <span class="menu-item-icon">ℹ️</span>About Us
+                        </a>
+                        <a href="/services/">
+                            <span class="menu-item-icon">🚗</span>Our Services
+                        </a>
+                        <a href="/booking/">
+                            <span class="menu-item-icon">📅</span>My Bookings
+                        </a>
+                        <a href="/payments/">
+                            <span class="menu-item-icon">💳</span>Payment History
+                        </a>
+                        <a href="/receipts/">
+                            <span class="menu-item-icon">🧾</span>My Receipts
+                        </a>
+                        <a href="/contact/">
+                            <span class="menu-item-icon">📞</span>Contact
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-overlay" id="menuOverlay"></div>
+                <h1>GoRydz</h1>
+            </a>
+            <div class="page-title">{% block page_title %}Cars{% endblock %}</div>
+        </div>
+    </header>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="messages">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Why Choose GoRydz?</h3>
+                <p>Experience the ultimate car rental service with our commitment to excellence and customer satisfaction.</p>
+                <ul class="features-list">
+                    <li>Wide selection of premium vehicles</li>
+                    <li>Transparent pricing with no hidden fees</li>
+                    <li>24/7 customer support</li>
+                    <li>Easy online booking system</li>
+                    <li>Flexible rental periods</li>
+                    <li>Fully insured vehicles</li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contact Information</h3>
+                <ul class="contact-info">
+                    <li>
+                        <i>📞</i>
+                        <a href="tel:+94771234567">+94 77 123 4567</a>
+                    </li>
+                    <li>
+                        <i>📧</i>
+                        <a href="mailto:info@gorydz.com">info@gorydz.com</a>
+                    </li>
+                    <li>
+                        <i>📍</i>
+                        <span>123 Main Street, Negombo, Sri Lanka</span>
+                    </li>
+                    <li>
+                        <i>🕒</i>
+                        <span>Mon - Sun: 8:00 AM - 10:00 PM</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Our Services</h3>
+                <p>From economy cars to luxury vehicles, we have the perfect ride for every occasion.</p>
+                <ul class="features-list">
+                    <li>Daily & Weekly Rentals</li>
+                    <li>Airport Pickup/Drop-off</li>
+                    <li>Long-term Leasing</li>
+                    <li>Corporate Fleet Solutions</li>
+                    <li>Wedding & Event Cars</li>
+                    <li>GPS Navigation Systems</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 GoRydz Car Rental. All rights reserved. | Designed with ❤️ in Sri Lanka</p>
+        </div>
+    </footer>
+
+    <script>
+        // Menu toggle functionality
+        const menuContainer = document.getElementById('menuContainer');
+        const menuIcon = document.getElementById('menuIcon');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+
+        // Toggle menu on click
+        menuIcon.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            menuContainer.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!menuContainer.contains(e.target)) {
+                menuContainer.classList.remove('active');
+            }
+        });
+
+        // Close menu when clicking overlay
+        menuOverlay.addEventListener('click', function() {
+            menuContainer.classList.remove('active');
+        });
+
+        // Close menu when pressing Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                menuContainer.classList.remove('active');
+            }
+        });
+
+        // Prevent menu from closing when clicking inside dropdown
+        dropdownMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    </script>
+</body>
+</html>

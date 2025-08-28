@@ -1,0 +1,43 @@
+{% extends 'cars/base.html' %}
+
+{% block title %}{{ car.brand }} {{ car.name }} - GoRydz{% endblock %}
+{% block page_title %}{{ car.brand }} {{ car.name }}{% endblock %}
+
+{% block content %}
+<div class="detail-grid">
+    <div class="detail-images">
+        <img src="{{ car.main_image.url }}" alt="{{ car.name }}" class="main-image" id="mainImage">
+        {% if car.images.all %}
+        <div class="thumbnail-grid">
+            <img src="{{ car.main_image.url }}" alt="{{ car.name }}" class="thumbnail" onclick="changeMainImage(this.src)">
+            {% for image in car.images.all %}
+            <img src="{{ image.image.url }}" alt="{{ car.name }}" class="thumbnail" onclick="changeMainImage(this.src)">
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="detail-info">
+        <h2>{{ car.brand }} {{ car.name }}</h2>
+        <h3>Car Details</h3>
+        <div class="info-item"><strong>Brand:</strong> {{ car.brand }}</div>
+        <div class="info-item"><strong>Year:</strong> {{ car.year }}</div>
+        <div class="info-item"><strong>Price per day:</strong>
+            <span style="color: #00bcd4; font-size: 20px; font-weight: bold;">${{ car.price_per_day }}</span>
+        </div>
+        <div class="info-item"><strong>Description:</strong>
+            <span style="margin-top: 10px; display: block;">{{ car.description }}</span>
+        </div>
+
+        <a href="{% url 'cars:book_car' car.id %}" class="btn" style="font-size: 18px; padding: 15px 30px; margin-top: 25px;">
+            Book This Car
+        </a>
+    </div>
+</div>
+
+<script>
+function changeMainImage(src) {
+    document.getElementById('mainImage').src = src;
+}
+</script>
+{% endblock %}

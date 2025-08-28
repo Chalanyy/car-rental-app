@@ -1,0 +1,32 @@
+{% extends 'cars/base.html' %}
+
+{% block title %}Receipt - GoRydz{% endblock %}
+{% block page_title %}Receipt{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto;">
+    <h2 style="color:#00bcd4; text-align:center;">Payment Receipt</h2>
+    <hr>
+    <h3>Booking Details</h3>
+    <p><strong>Car:</strong> {{ booking.car.brand }} {{ booking.car.name }}</p>
+    <p><strong>Customer:</strong> {{ booking.customer_name }}</p>
+    <p><strong>Email:</strong> {{ booking.customer_email }}</p>
+    <p><strong>Phone:</strong> {{ booking.customer_phone }}</p>
+    <p><strong>Rental Period:</strong> {{ booking.start_date }} → {{ booking.end_date }}</p>
+    <p><strong>Total Paid:</strong> ${{ booking.total_amount }}</p>
+
+    {% if booking.is_paid and booking.payment %}
+    <hr>
+    <h3>Payment Details</h3>
+    <p><strong>Status:</strong> Paid ✅</p>
+    <p><strong>Cardholder:</strong> {{ booking.payment.cardholder_name }}</p>
+    <p><strong>Card:</strong> **** **** **** {{ booking.payment.card_last4 }}</p>
+    <p><strong>Paid On:</strong> {{ booking.payment.timestamp }}</p>
+    {% else %}
+    <p style="color:#e53935;"><strong>Status:</strong> Not paid</p>
+    {% endif %}
+
+    <hr>
+    <p style="text-align:center;">Thank you for choosing <strong>GoRydz</strong> 🚗</p>
+</div>
+{% endblock %}

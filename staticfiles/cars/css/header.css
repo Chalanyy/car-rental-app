@@ -1,0 +1,26 @@
+/* Header container */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: rgba(255, 255, 255, 0.95); /* slightly transparent */
+    backdrop-filter: blur(10px); /* blur effect */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Logo */
+.logo-image-only {
+    height: 45px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover .logo-image-only {
+    transform: scale(1.05);
+}
+
+

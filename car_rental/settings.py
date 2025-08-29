@@ -18,7 +18,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'cars',
+    'car_rental',
     'rest_framework',
+    
 ]
 
 # Middleware
@@ -38,13 +40,15 @@ ROOT_URLCONF = 'car_rental.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # Add any custom template directories here
+        'DIRS': [BASE_DIR / 'templates'],  # IMPORTANT: Add this for custom templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',  # IMPORTANT: Add this for MEDIA_URL
             ],
         },
     },
@@ -75,18 +79,32 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JS, images)
-STATIC_URL = '/static/'                       # URL to access static files
-STATICFILES_DIRS = [BASE_DIR / "static"]      # Folders to look for static files during development
-STATIC_ROOT = BASE_DIR / "staticfiles"        # Folder where `collectstatic` will copy all static files
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Media files (uploads)
-MEDIA_URL = '/media/'                          # URL to access uploaded media
-MEDIA_ROOT = BASE_DIR / "media"                # Folder where uploaded files are stored
+# Media files (uploads) - CORRECTED
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'  # Use Path object consistently
 
-# Email settings for development (prints emails to console)
+# Email settings for development
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'noreply@carrentaldemo.com'
 CONTACT_EMAIL = 'admin@carrentaldemo.com'
 
 # Default primary key
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Login/Logout redirect URLs
+LOGIN_URL = 'home'
+
+# Session settings
+SESSION_COOKIE_AGE = 86400  # 24 hours
+SESSION_SAVE_EVERY_REQUEST = True
+
+AUTHENTICATION_BACKENDS = [
+    'cars.authentication.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]

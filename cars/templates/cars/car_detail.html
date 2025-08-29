@@ -3,10 +3,487 @@
 {% block title %}{{ car.brand }} {{ car.name }} - GoRydz{% endblock %}
 {% block page_title %}{{ car.brand }} {{ car.name }}{% endblock %}
 
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+        min-height: 100vh;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 20% 80%, rgba(0, 188, 212, 0.08) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(21, 157, 181, 0.08) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        max-width: 1200px;
+        margin: 20px auto;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5),
+                    0 0 0 1px rgba(255, 255, 255, 0.1);
+        animation: slideUp 0.6s ease;
+        position: relative;
+        z-index: 2;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .detail-images {
+        padding: 30px;
+        background: linear-gradient(45deg, #000000 0%, #1a1a1a 50%, #0d0d0d 100%);
+        position: relative;
+    }
+
+    .detail-images::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at center, rgba(0, 188, 212, 0.05) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .main-image {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+        border-radius: 16px;
+        margin-bottom: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4),
+                    0 0 0 1px rgba(255, 255, 255, 0.1);
+        transition: all 0.4s ease;
+        position: relative;
+        z-index: 2;
+    }
+
+    .main-image:hover {
+        transform: scale(1.02) translateY(-5px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6),
+                    0 0 30px rgba(0, 188, 212, 0.2);
+    }
+
+    .thumbnail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .thumbnail {
+        width: 100%;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .thumbnail:hover {
+        border-color: #00bcd4;
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5),
+                    0 0 20px rgba(0, 188, 212, 0.3);
+    }
+
+    .thumbnail.active {
+        border-color: #00bcd4;
+        box-shadow: 0 0 20px rgba(0, 188, 212, 0.5);
+    }
+
+    .detail-info {
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 50%, #1a1a1a 100%);
+        position: relative;
+    }
+
+    .detail-info::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 80% 20%, rgba(21, 157, 181, 0.05) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .detail-info h2 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 10px;
+        background: linear-gradient(45deg, #00bcd4, #26c6da, #159db5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 30px rgba(0, 188, 212, 0.3);
+        position: relative;
+        z-index: 2;
+    }
+
+    .detail-info h3 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #e0e0e0;
+        margin: 25px 0 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .detail-info h3::before {
+        content: '';
+        width: 4px;
+        height: 20px;
+        background: linear-gradient(45deg, #00bcd4, #159db5);
+        border-radius: 2px;
+        box-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+    }
+
+    .info-item {
+        background: rgba(0, 0, 0, 0.4);
+        padding: 18px 25px;
+        margin: 10px 0;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-left: 4px solid #00bcd4;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(10px);
+        position: relative;
+        z-index: 2;
+    }
+
+    .info-item:hover {
+        transform: translateX(8px) translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4),
+                    0 0 20px rgba(0, 188, 212, 0.1);
+        background: rgba(0, 188, 212, 0.05);
+        border-left-color: #26c6da;
+    }
+
+    .info-item strong {
+        color: #b0b0b0;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-item span:last-child {
+        color: #ffffff;
+        font-weight: 500;
+        font-size: 1rem;
+    }
+
+    .price-highlight {
+        color: #00bcd4 !important;
+        font-size: 28px !important;
+        font-weight: 800 !important;
+        background: linear-gradient(45deg, #00bcd4, #26c6da) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+        text-shadow: 0 0 20px rgba(0, 188, 212, 0.5) !important;
+        filter: drop-shadow(0 0 10px rgba(0, 188, 212, 0.3));
+    }
+
+    .description-block {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 25px;
+        border-radius: 12px;
+        margin: 15px 0;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-left: 4px solid #159db5;
+        line-height: 1.8;
+        color: #d0d0d0;
+        backdrop-filter: blur(10px);
+        position: relative;
+        z-index: 2;
+    }
+
+    .btn {
+        background: linear-gradient(135deg, #00bcd4 0%, #159db5 50%, #0891a6 100%);
+        color: white;
+        border: none;
+        padding: 20px 40px;
+        border-radius: 15px;
+        font-size: 20px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-top: 30px;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        box-shadow: 0 15px 35px rgba(0, 188, 212, 0.3);
+        z-index: 2;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 188, 212, 0.4);
+        text-decoration: none;
+        color: white;
+        background: linear-gradient(135deg, #26c6da 0%, #00bcd4 50%, #159db5 100%);
+    }
+
+    .btn:hover::before {
+        left: 100%;
+    }
+
+    .btn::after {
+        content: '🚗';
+        margin-left: 8px;
+        font-size: 18px;
+    }
+
+    /* Rating section */
+    .rating-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 25px;
+        padding: 15px 20px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        z-index: 2;
+    }
+
+    .stars {
+        color: #fbbf24;
+        font-size: 1.4rem;
+        text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        filter: drop-shadow(0 2px 5px rgba(251, 191, 36, 0.3));
+    }
+
+    .rating-text {
+        color: #b0b0b0;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+            margin: 10px;
+        }
+        
+        .detail-images,
+        .detail-info {
+            padding: 25px;
+        }
+        
+        .detail-info h2 {
+            font-size: 2rem;
+        }
+        
+        .main-image {
+            height: 250px;
+        }
+        
+        .thumbnail-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .btn {
+            font-size: 18px;
+            padding: 18px 30px;
+        }
+    }
+
+    /* Special effects */
+    .detail-container {
+        position: relative;
+    }
+
+    .detail-grid::after {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, #00bcd4, #159db5, #26c6da, #00bcd4);
+        border-radius: 26px;
+        z-index: -1;
+        animation: gradientShift 4s ease-in-out infinite;
+        background-size: 300% 300%;
+        opacity: 0.3;
+    }
+
+    @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    /* Availability badge */
+    .availability-status {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 10px 18px;
+        border-radius: 25px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        z-index: 10;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    /* Enhanced hover effects */
+    .info-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, rgba(0, 188, 212, 0.1), transparent);
+        border-radius: 12px;
+        transition: width 0.3s ease;
+        z-index: -1;
+    }
+
+    .info-item:hover::before {
+        width: 100%;
+    }
+
+    /* Glowing text effects */
+    .detail-info h2:hover {
+        text-shadow: 0 0 40px rgba(0, 188, 212, 0.6);
+        transform: scale(1.02);
+        transition: all 0.3s ease;
+    }
+
+    /* Card shine effect */
+    .detail-grid::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(transparent, rgba(0, 188, 212, 0.1), transparent 30%);
+        animation: rotate 4s linear infinite;
+        z-index: -1;
+    }
+
+    @keyframes rotate {
+        100% { transform: rotate(1turn); }
+    }
+
+    /* Enhanced button loading state */
+    .btn.loading {
+        background: linear-gradient(135deg, #4a5568, #2d3748);
+        cursor: not-allowed;
+        transform: scale(0.98);
+    }
+
+    .btn.loading::after {
+        content: '⏳';
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Floating elements */
+    .detail-images,
+    .detail-info {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .detail-info {
+        animation-delay: -3s;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-3px); }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="detail-grid">
     <div class="detail-images">
-        <img src="{{ car.main_image.url }}" alt="{{ car.name }}" class="main-image" id="mainImage">
+        <div style="position: relative;">
+            <img src="{{ car.main_image.url }}" alt="{{ car.name }}" class="main-image" id="mainImage">
+            <div class="availability-status">Available Now</div>
+        </div>
+        
         {% if car.images.all %}
         <div class="thumbnail-grid">
             <img src="{{ car.main_image.url }}" alt="{{ car.name }}" class="thumbnail" onclick="changeMainImage(this.src)">
@@ -19,17 +496,37 @@
 
     <div class="detail-info">
         <h2>{{ car.brand }} {{ car.name }}</h2>
-        <h3>Car Details</h3>
-        <div class="info-item"><strong>Brand:</strong> {{ car.brand }}</div>
-        <div class="info-item"><strong>Year:</strong> {{ car.year }}</div>
-        <div class="info-item"><strong>Price per day:</strong>
-            <span style="color: #00bcd4; font-size: 20px; font-weight: bold;">${{ car.price_per_day }}</span>
-        </div>
-        <div class="info-item"><strong>Description:</strong>
-            <span style="margin-top: 10px; display: block;">{{ car.description }}</span>
+        
+        <div class="rating-section">
+            <div class="stars">★★★★★</div>
+            <span class="rating-text">4.8 (127 reviews)</span>
         </div>
 
-        <a href="{% url 'cars:book_car' car.id %}" class="btn" style="font-size: 18px; padding: 15px 30px; margin-top: 25px;">
+        <h3>Car Details</h3>
+        
+        <div class="info-item">
+            <strong>Brand:</strong> 
+            <span>{{ car.brand }}</span>
+        </div>
+        
+        <div class="info-item">
+            <strong>Year:</strong> 
+            <span>{{ car.year }}</span>
+        </div>
+        
+        <div class="info-item">
+            <strong>Price per day:</strong>
+            <span class="price-highlight">${{ car.price_per_day }}</span>
+        </div>
+        
+        {% if car.description %}
+        <div class="info-item" style="flex-direction: column; align-items: flex-start;">
+            <strong style="margin-bottom: 15px;">Description:</strong>
+            <div class="description-block">{{ car.description }}</div>
+        </div>
+        {% endif %}
+
+        <a href="{% url 'cars:book_car' car.id %}" class="btn" onclick="bookingAnimation(event)">
             Book This Car
         </a>
     </div>
@@ -37,7 +534,100 @@
 
 <script>
 function changeMainImage(src) {
-    document.getElementById('mainImage').src = src;
+    const mainImg = document.getElementById('mainImage');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    
+    // Enhanced transition effect
+    mainImg.style.opacity = '0.3';
+    mainImg.style.transform = 'scale(0.95)';
+    
+    setTimeout(() => {
+        mainImg.src = src;
+        mainImg.style.opacity = '1';
+        mainImg.style.transform = 'scale(1)';
+    }, 200);
+    
+    // Update active thumbnail with glow effect
+    thumbnails.forEach(thumb => thumb.classList.remove('active'));
+    event.target.classList.add('active');
 }
+
+function bookingAnimation(event) {
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    
+    // Enhanced booking animation
+    btn.classList.add('loading');
+    btn.style.transform = 'scale(0.95)';
+    btn.innerHTML = 'Processing Booking...';
+    
+    // Add ripple effect
+    const ripple = document.createElement('div');
+    ripple.style.cssText = `
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transform: scale(0);
+        animation: rippleEffect 0.6s linear;
+        left: ${event.offsetX - 10}px;
+        top: ${event.offsetY - 10}px;
+        width: 20px;
+        height: 20px;
+        pointer-events: none;
+    `;
+    
+    btn.appendChild(ripple);
+    
+    setTimeout(() => {
+        btn.classList.remove('loading');
+        btn.style.transform = 'scale(1)';
+        btn.innerHTML = originalText;
+        ripple.remove();
+    }, 1000);
+    
+    // Continue with normal link behavior after delay
+    setTimeout(() => {
+        window.location.href = btn.href;
+    }, 1000);
+    
+    return false; // Prevent immediate navigation
+}
+
+// Enhanced entrance animations
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.info-item');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(-30px) translateY(10px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            card.style.opacity = '1';
+            card.style.transform = 'translateX(0) translateY(0)';
+        }, index * 120 + 300);
+    });
+
+    // Add CSS for ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+});
+
+// Parallax scroll effect for background
+window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+    const parallax = document.querySelector('.detail-grid::before');
+    if (parallax) {
+        const speed = scrolled * 0.5;
+        parallax.style.transform = `translateY(${speed}px)`;
+    }
+});
 </script>
 {% endblock %}

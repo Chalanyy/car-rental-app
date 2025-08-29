@@ -2,10 +2,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
-from django.views.generic import ListView, DetailView, TemplateView
-from .models import Car, Booking, Payment
+from django.views.generic import ListView, TemplateView
+from .models import Car, Booking, Payment, Review
 from datetime import datetime
 from decimal import Decimal
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.contrib.auth.models import User
+from django.urls import reverse_lazy
+from .forms import EmailAuthenticationForm, ProfileForm, CustomPasswordChangeForm
+from django.contrib.auth.decorators import login_required
 
 # ===== HOME PAGE =====
 class HomeView(TemplateView):
@@ -67,15 +73,33 @@ def book_car(request, car_id):
 # ===== PAYMENT =====
 def payment(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
+    
+    if booking.is_paid:
+        messages.info(request, 'This booking has already been paid.')
+        return redirect("cars:receipt", booking_id=booking.id)
 
     if request.method == "POST":
         card_number = (request.POST.get("card_number") or "").replace(" ", "")
-        cardholder_name = request.POST.get("cardholder_name") or ""
+        cardholder_name = (request.POST.get("cardholder_name") or "").strip()
+        expiry_date = (request.POST.get("expiry_date") or "").strip()
+        cvv = (request.POST.get("cvv") or "").strip()
 
-        if len(card_number) < 4:
-            return render(request, "cars/payment.html", {"booking": booking, "error": "Invalid card number."})
+        errors = []
+        if len(card_number) < 13 or len(card_number) > 19:
+            errors.append("Invalid card number.")
+        if not cardholder_name:
+            errors.append("Cardholder name is required.")
+        if not expiry_date or len(expiry_date) != 5:
+            errors.append("Invalid expiry date format (MM/YY).")
+        if not cvv or len(cvv) < 3:
+            errors.append("Invalid CVV.")
 
-        # Save minimal payment info
+        if errors:
+            return render(request, "cars/payment.html", {
+                "booking": booking, 
+                "errors": errors
+            })
+
         Payment.objects.create(
             booking=booking,
             cardholder_name=cardholder_name,
@@ -86,6 +110,7 @@ def payment(request, booking_id):
         booking.is_paid = True
         booking.save()
 
+        messages.success(request, 'Payment processed successfully!')
         return redirect("cars:receipt", booking_id=booking.id)
 
     return render(request, "cars/payment.html", {"booking": booking})
@@ -93,22 +118,24 @@ def payment(request, booking_id):
 # ===== RECEIPT =====
 def receipt(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
-    return render(request, "cars/receipt.html", {"booking": booking})
+    payment = Payment.objects.filter(booking=booking).first()
+    return render(request, 'cars/receipt.html', {
+        'booking': booking,
+        'payment': payment,
+    })
 
 # ===== ABOUT =====
-class AboutView(TemplateView):
-    template_name = 'cars/about.html'
+def about_view(request):
+    if request.method == "POST":
+        name = request.POST.get('name', '').strip()
+        comment = request.POST.get('comment', '').strip()
+        if name and comment:
+            Review.objects.create(name=name, comment=comment)
+            messages.success(request, 'Thank you for your review!')
+            return redirect('cars:about')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({
-            'page_title': 'About Us',
-            'company_name': 'GoRydz Car Rental',
-            'founded_year': '2020',
-            'total_cars': Car.objects.count(),
-            'total_bookings': Booking.objects.count(),
-        })
-        return context
+    reviews = Review.objects.all().order_by('-created_at')
+    return render(request, 'cars/about.html', {'reviews': reviews})
 
 # ===== CONTACT =====
 def contact(request):
@@ -142,3 +169,67 @@ def contact(request):
         'address': '123 Main Street, Negombo, Sri Lanka',
         'business_hours': {'weekdays': '8:00-22:00', 'saturday': '8:00-22:00', 'sunday': '8:00-22:00'},
     })
+
+# ===== SERVICES =====
+def services(request):
+    context = {
+        'page_title': 'Our Services',
+        'services_list': [
+            {'title': 'Daily Car Rental', 'description': 'Rent a car for your daily needs', 'icon': 'fas fa-car'},
+            {'title': 'Weekly Rentals', 'description': 'Extended rental options for longer stays', 'icon': 'fas fa-calendar-week'},
+            {'title': 'Airport Transfers', 'description': 'Pickup and drop-off services', 'icon': 'fas fa-plane'},
+            {'title': '24/7 Support', 'description': 'Customer support anytime', 'icon': 'fas fa-headset'},
+            {'title': 'GPS Navigation', 'description': 'Cars with GPS systems', 'icon': 'fas fa-map-marked-alt'},
+            {'title': 'Insurance Coverage', 'description': 'Comprehensive insurance', 'icon': 'fas fa-shield-alt'},
+        ]
+    }
+    return render(request, 'cars/services.html', context)
+
+# ===== AUTHENTICATION AND PROFILE =====
+class CustomLoginView(LoginView):
+    template_name = 'cars/login.html'
+    redirect_authenticated_user = True
+
+    def get_success_url(self):
+        user = self.request.user
+        if user.is_superuser:
+            return reverse_lazy('admin:index')
+        return reverse_lazy('cars:car_list')
+
+def profile(request, username=None):
+    if username:
+        profile_user = get_object_or_404(User, username=username)
+    else:
+        if not request.user.is_authenticated:
+            return redirect('login')
+        profile_user = request.user
+    return render(request, 'cars/profile.html', {'profile_user': profile_user})
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('my_profile')
+    else:
+        form = ProfileForm(instance=request.user)
+    return render(request, 'cars/edit_profile.html', {'form': form})
+
+class CustomPasswordChangeView(PasswordChangeView):
+    form_class = CustomPasswordChangeForm
+    template_name = 'cars/change_password.html'  # Fixed syntax
+    success_url = reverse_lazy('my_profile')
+
+def login_view(request):
+    return render(request, 'cars/login.html')
+    
+@login_required
+def payment_list(request):
+    payments = Payment.objects.filter(booking__customer_email=request.user.email)
+    return render(request, 'cars/payment_list.html', {'payments': payments})
+
+@login_required
+def receipt_list(request):
+    bookings = Booking.objects.filter(customer_email=request.user.email)
+    return render(request, 'cars/receipt_list.html', {'bookings': bookings})

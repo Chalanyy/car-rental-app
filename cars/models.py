@@ -16,17 +16,12 @@ class Car(models.Model):
 class CarImage(models.Model):
     car = models.ForeignKey(Car, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='cars/')
-    
+        
     def __str__(self):
         return f"Image for {self.car.name}"
 
+# Single Booking model - combining both your versions
 class Booking(models.Model):
-    PAYMENT_STATUS = [
-        ('pending', 'Pending'),
-        ('paid', 'Paid'),
-        ('cancelled', 'Cancelled'),
-    ]
-    
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     customer_name = models.CharField(max_length=100)
     customer_email = models.EmailField()
@@ -34,21 +29,8 @@ class Booking(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_status = models.CharField(max_length=10, choices=PAYMENT_STATUS, default='pending')
+    is_paid = models.BooleanField(default=False)  # This is what your views.py uses
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Booking for {self.car.name} by {self.customer_name}"
-
-class Booking(models.Model):
-    car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    customer_name = models.CharField(max_length=100)
-    customer_email = models.EmailField()
-    customer_phone = models.CharField(max_length=20)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    is_paid = models.BooleanField(default=False)  # <-- add this
 
     def __str__(self):
         return f"{self.customer_name} - {self.car.name}"
@@ -56,10 +38,18 @@ class Booking(models.Model):
 class Payment(models.Model):
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name="payment")
     cardholder_name = models.CharField(max_length=100)
-    card_last4 = models.CharField(max_length=4)           # store only last 4
+    card_last4 = models.CharField(max_length=4)  # store only last 4
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Payment for booking #{self.booking_id}"
-# Create your models here.
+        return f"Payment for booking #{self.booking.id}"
+    
+
+class Review(models.Model):
+    name = models.CharField(max_length=100)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.comment[:20]}"

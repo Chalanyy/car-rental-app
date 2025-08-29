@@ -1,0 +1,29 @@
+{% extends 'cars/base.html' %}
+
+{% block title %}Receipts - GoRydz{% endblock %}
+{% block page_title %}Your Receipts{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-card">
+        <h2>Your Receipts</h2>
+        {% for booking in bookings %}
+            <div class="detail-item">
+                <span>{{ booking.car.make }} {{ booking.car.model }}</span>
+                <span>${{ booking.total_amount }} ({{ booking.start_date|date:"F d, Y" }})</span>
+                <a href="{% url 'cars:receipt' booking.id %}">View Receipt</a>
+            </div>
+        {% empty %}
+            <p>No receipts found.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.profile-container { max-width: 600px; margin: 2rem auto; }
+.profile-card { background: rgba(20, 20, 20, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 2rem; }
+.detail-item { display: flex; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+.detail-item span { color: white; }
+.detail-item a { color: rgba(255, 255, 255, 0.7); text-decoration: none; }
+</style>
+{% endblock %}

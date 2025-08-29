@@ -1,32 +1,133 @@
 {% extends 'cars/base.html' %}
 
 {% block title %}Receipt - GoRydz{% endblock %}
-{% block page_title %}Receipt{% endblock %}
+{% block page_title %}Booking Receipt{% endblock %}
 
 {% block content %}
-<div style="max-width: 700px; margin: 0 auto;">
-    <h2 style="color:#00bcd4; text-align:center;">Payment Receipt</h2>
-    <hr>
-    <h3>Booking Details</h3>
-    <p><strong>Car:</strong> {{ booking.car.brand }} {{ booking.car.name }}</p>
-    <p><strong>Customer:</strong> {{ booking.customer_name }}</p>
-    <p><strong>Email:</strong> {{ booking.customer_email }}</p>
-    <p><strong>Phone:</strong> {{ booking.customer_phone }}</p>
-    <p><strong>Rental Period:</strong> {{ booking.start_date }} → {{ booking.end_date }}</p>
-    <p><strong>Total Paid:</strong> ${{ booking.total_amount }}</p>
-
-    {% if booking.is_paid and booking.payment %}
-    <hr>
-    <h3>Payment Details</h3>
-    <p><strong>Status:</strong> Paid ✅</p>
-    <p><strong>Cardholder:</strong> {{ booking.payment.cardholder_name }}</p>
-    <p><strong>Card:</strong> **** **** **** {{ booking.payment.card_last4 }}</p>
-    <p><strong>Paid On:</strong> {{ booking.payment.timestamp }}</p>
-    {% else %}
-    <p style="color:#e53935;"><strong>Status:</strong> Not paid</p>
-    {% endif %}
-
-    <hr>
-    <p style="text-align:center;">Thank you for choosing <strong>GoRydz</strong> 🚗</p>
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <h2>Booking Receipt</h2>
+        </div>
+        
+        <div class="profile-details">
+            <div class="detail-item">
+                <label>Car:</label>
+                <span>{{ booking.car.make }} {{ booking.car.model }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Customer Name:</label>
+                <span>{{ booking.customer_name }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Email:</label>
+                <span>{{ booking.customer_email }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Start Date:</label>
+                <span>{{ booking.start_date|date:"F d, Y" }}</span>
+            </div>
+            <div class="detail-item">
+                <label>End Date:</label>
+                <span>{{ booking.end_date|date:"F d, Y" }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Total Amount:</label>
+                <span>${{ booking.total_amount }}</span>
+            </div>
+            {% if payment %}
+            <div class="detail-item">
+                <label>Payment Status:</label>
+                <span>Paid</span>
+            </div>
+            <div class="detail-item">
+                <label>Cardholder Name:</label>
+                <span>{{ payment.cardholder_name }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Card Ending:</label>
+                <span>**** {{ payment.card_last4 }}</span>
+            </div>
+            <div class="detail-item">
+                <label>Payment Date:</label>
+                <span>{{ payment.payment_date|date:"F d, Y H:i" }}</span>
+            </div>
+            {% else %}
+            <div class="detail-item">
+                <label>Payment Status:</label>
+                <span>Not Paid</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="profile-actions">
+            <a href="{% url 'cars:car_list' %}" class="btn btn-outline">Back to Cars</a>
+        </div>
+    </div>
 </div>
+
+<style>
+.profile-container {
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.profile-card {
+    background: rgba(20, 20, 20, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+}
+
+.profile-header {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-header h2 {
+    color: white;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.profile-details {
+    margin-bottom: 2rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.detail-item label {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.detail-item span {
+    color: white;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+}
+</style>
 {% endblock %}

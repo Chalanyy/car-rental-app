@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Services - Car Rental</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .service-item { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .back-link { display: inline-block; margin-top: 20px; padding: 10px 15px; background: #007bff; color: white; text-decoration: none; border-radius: 3px; }
+        .back-link:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>{{ page_title }}</h1>
+    <p>Welcome to our car rental services page!</p>
+    
+    {% for service in services_list %}
+    <div class="service-item">
+        <h3>{{ service.title }}</h3>
+        <p>{{ service.description }}</p>
+    </div>
+    {% endfor %}
+    
+    <!-- Try different URL references -->
+    <a href="/" class="back-link">Back to Home</a>
+    <a href="{% url 'cars:car_list' %}" class="back-link" style="margin-left: 10px;">View Cars</a>
+    
+    <!-- If no namespace, try: -->
+    <!-- <a href="{% url 'car_list' %}" class="back-link">View Cars</a> -->
+</body>
+</html>

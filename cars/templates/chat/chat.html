@@ -226,7 +226,8 @@
                 seats: 4,
                 pricePerDay: 4000.00,
                 rating: "4.8 (127 reviews)",
-                description: "Year: 2008, Transmission: Automatic, Fuel Type: Petrol, Engine: 1,500cc, Mileage: 212,000 km, Condition: Used, well-maintained, Body Type: Saloon"
+                description: "Year: 2008, Transmission: Automatic, Fuel Type: Petrol, Engine: 1,500cc, Mileage: 212,000 km, Condition: Used, well-maintained, Body Type: Saloon",
+                availability: "Available"
             },
             {
                 brand: "BMW",
@@ -236,7 +237,8 @@
                 seats: 4,
                 pricePerDay: 7000.00,
                 rating: "4.8 (127 reviews)",
-                description: "Condition: Used, Transmission: Automatic, Body Type: SUV / 4x4, Fuel Type: Petrol, Engine Capacity: 1,500 cc, Mileage: 87,000 km"
+                description: "Condition: Used, Transmission: Automatic, Body Type: SUV / 4x4, Fuel Type: Petrol, Engine Capacity: 1,500 cc, Mileage: 87,000 km",
+                availability: "Available"
             },
             {
                 brand: "Audi",
@@ -246,7 +248,8 @@
                 seats: 4,
                 pricePerDay: 5000.00,
                 rating: "4.8 (127 reviews)",
-                description: "Condition: Used, Transmission: Automatic, Body Type: Saloon, Fuel Type: Petrol, Engine Capacity: 1,800 cc, Mileage: 60,000 km"
+                description: "Condition: Used, Transmission: Automatic, Body Type: Saloon, Fuel Type: Petrol, Engine Capacity: 1,800 cc, Mileage: 60,000 km",
+                availability: "Available"
             },
             {
                 brand: "Toyota",
@@ -256,7 +259,8 @@
                 seats: 4,
                 pricePerDay: 5200.00,
                 rating: "4.8 (127 reviews)",
-                description: "Condition: New, Transmission: Automatic, Body Type: Saloon, Fuel Type: Petrol, Engine Capacity: 1,500 cc, Mileage: 102 km"
+                description: "Condition: New, Transmission: Automatic, Body Type: Saloon, Fuel Type: Petrol, Engine Capacity: 1,500 cc, Mileage: 102 km",
+                availability: "Available"
             },
             {
                 brand: "Honda",
@@ -266,7 +270,8 @@
                 seats: 4,
                 pricePerDay: 6000.00,
                 rating: "4.8 (127 reviews)",
-                description: "Condition: Used, Transmission: Tiptronic, Body Type: Saloon, Fuel Type: Hybrid, Engine Capacity: 1,500 cc, Mileage: 169 km"
+                description: "Condition: Used, Transmission: Tiptronic, Body Type: Saloon, Fuel Type: Hybrid, Engine Capacity: 1,500 cc, Mileage: 169 km",
+                availability: "Available"
             },
             {
                 brand: "Toyota",
@@ -276,7 +281,8 @@
                 seats: 4,
                 pricePerDay: 3000.00,
                 rating: "4.8 (127 reviews)",
-                description: "Condition: Used, Transmission: Automatic, Body Type: Hatchback, Fuel Type: Petrol, Engine Capacity: 1,000 cc, Mileage: 160,000 km"
+                description: "Condition: Used, Transmission: Automatic, Body Type: Hatchback, Fuel Type: Petrol, Engine Capacity: 1,000 cc, Mileage: 160,000 km",
+                availability: "Available"
             },
             {
                 brand: "Toyota",
@@ -286,14 +292,49 @@
                 seats: 5,
                 pricePerDay: 4500.00,
                 rating: "4.8 (127 reviews)",
-                description: "Condition: Used, Transmission: Automatic, Body Type: Saloon, Fuel Type: Petrol, Engine Capacity: 1,500 cc, Mileage: 160,000 km"
+                description: "Condition: Used, Transmission: Automatic, Body Type: Saloon, Fuel Type: Petrol, Engine Capacity: 1,500 cc, Mileage: 160,000 km",
+                availability: "Available"
+            },
+            {
+                brand: "Perodua",
+                model: "Axia",
+                year: 2021,
+                location: "Kalutara, Colombo, Galle",
+                seats: 4,
+                pricePerDay: 2000.00,
+                rating: "Not rated",
+                description: "Condition: Used – Good, Transmission: Automatic, Body Type: Hatchback, Fuel Type: Petrol, Engine Capacity: 1,000 cc, Mileage: 12,400 km",
+                availability: "Available"
+            },
+            {
+                brand: "Honda",
+                model: "Vezel Hybrid",
+                year: 2023,
+                location: "Kalutara, Negombo, Kandy, Galle",
+                seats: 5,
+                pricePerDay: 6000.00,
+                rating: "Not rated",
+                description: "Condition: New, Transmission: Automatic (Hybrid), Body Type: SUV, Fuel Type: Petrol / Hybrid, Engine Capacity: 1,500 cc, Mileage: 85 km",
+                availability: "Available"
+            },
+            {
+                brand: "Mitsubishi",
+                model: "Mirage",
+                year: 2017,
+                location: "Kalutara, Negombo, Kandy, Galle, Colombo",
+                seats: 4,
+                pricePerDay: 2000.00,
+                rating: "Not rated",
+                description: "Condition: Used – Excellent, Transmission: Automatic, Body Type: Hatchback, Fuel Type: Petrol, Engine Capacity: 1,200 cc, Mileage: 14,500 km",
+                availability: "Available"
             }
         ];
 
         // Conversation context (for multi-turn awareness)
         let conversationContext = {
             lastCar: null,  // Remember the last mentioned car
-            lastTopic: null  // 'car' or 'company'
+            lastTopic: null, // 'car' or 'company'
+            lastLocation: null // Remember the last mentioned location
         };
 
         // Load chat history from localStorage
@@ -344,38 +385,86 @@
 
         // Handle quick reply clicks
         function handleQuickReply(reply) {
-            $('#user-input').val(reply);
-            sendMessage();
+            // Check if the reply matches a car name
+            const car = cars.find(c => `${c.brand} ${c.model}`.toLowerCase() === reply.toLowerCase());
+            if (car) {
+                // Directly generate a response for the car's details
+                conversationContext.lastCar = car;
+                conversationContext.lastTopic = 'car';
+                $('#user-input').val(reply);
+                const response = `Details for the ${car.brand} ${car.model}: ${car.description} Would you like to know more about its price, location, or other details?`;
+                appendMessage('user', reply);
+                const quickReplies = ['Price', 'Details', 'Year', 'Location', 'Seats', 'Rating'];
+                setTimeout(() => {
+                    $('.typing-message').remove();
+                    appendMessage('ai', response, new Date().toLocaleTimeString(), quickReplies);
+                }, 1000);
+                $('#chat-messages').append(`
+                    <div class="message ai-message typing-message">
+                        <div class="bubble typing">
+                            Thinking...
+                        </div>
+                    </div>
+                `);
+            } else {
+                // For non-car quick replies (e.g., Contact Info)
+                $('#user-input').val(reply);
+                sendMessage();
+            }
         }
 
-        // Function to identify the car from the message with regex for better matching
-        function identifyCar(message) {
+        // Function to identify the car or location from the message
+        function identifyCarOrLocation(message) {
             message = message.toLowerCase();
-            const patterns = {
+            const carPatterns = {
                 "mitsubishi lancer": /mitsubishi|lancer/,
                 "bmw x1": /bmw|x1/,
                 "audi a3": /audi|a3/,
                 "toyota axio corolla": /toyota.*(axio|corolla)/,
-                "honda vezel": /honda|vezel/,
+                "honda vezel z": /honda.*(vezel.*z)/,
                 "toyota vitz": /toyota.*vitz/,
-                "toyota premio": /toyota.*premio/
+                "toyota premio": /toyota.*premio/,
+                "perodua axia": /perodua|axia/,
+                "honda vezel hybrid": /honda.*(vezel.*hybrid)/,
+                "mitsubishi mirage": /mitsubishi.*mirage/
             };
-            for (const [key, pattern] of Object.entries(patterns)) {
+            const locationPatterns = {
+                "kalutara": /kalutara/,
+                "colombo": /colombo/,
+                "galle": /galle/,
+                "negombo": /negombo/,
+                "kandy": /kandy/,
+                "main office": /main office/
+            };
+
+            // Check for car match
+            for (const [key, pattern] of Object.entries(carPatterns)) {
                 if (pattern.test(message)) {
                     const [brand, model] = key.split(' ');
-                    return cars.find(car => car.brand.toLowerCase() === brand && car.model.toLowerCase() === model.replace('ex', 'Ex'));
+                    const car = cars.find(car => car.brand.toLowerCase() === brand && car.model.toLowerCase() === model.replace('ex', 'Ex').replace('z', 'Z').replace('hybrid', 'Hybrid'));
+                    if (car) return { type: 'car', value: car };
                 }
             }
+
+            // Check for location match
+            for (const [location, pattern] of Object.entries(locationPatterns)) {
+                if (pattern.test(message)) {
+                    const matchedCars = cars.filter(car => car.location.toLowerCase().includes(location));
+                    return { type: 'location', value: location, cars: matchedCars };
+                }
+            }
+
             return null;
         }
 
-        // Function to check if the message is about a car or company with improved keywords
+        // Function to check if the message is about a car, company, or location
         function isRelatedQuery(message) {
             const keywords = [
                 "mitsubishi", "lancer", "bmw", "x1", "audi", "a3", "toyota", "axio", "corolla", "honda", "vezel",
-                "vitz", "premio", "car", "price", "details", "seats", "year", "location", "rating", "description",
-                "gorydz", "why choose", "contact", "services", "rental", "booking", "support", "fleet", "airport",
-                "wedding", "leasing", "gps", "book", "reserve", "availability"
+                "vitz", "premio", "perodua", "axia", "mirage", "car", "price", "details", "seats", "year", "location",
+                "rating", "description", "gorydz", "why choose", "contact", "services", "rental", "booking", "support",
+                "fleet", "airport", "wedding", "leasing", "gps", "book", "reserve", "availability", "kalutara", "colombo",
+                "galle", "negombo", "kandy", "main office"
             ];
             return keywords.some(keyword => message.toLowerCase().includes(keyword));
         }
@@ -402,35 +491,49 @@
                 return `GoRydz provides: ${companyDetails.services}`;
             }
 
-            // Handle car-related queries with context
-            let car = identifyCar(message) || conversationContext.lastCar;
-            if (car) {
-                conversationContext.lastCar = car;
-                conversationContext.lastTopic = 'car';
-                quickReplies = ['Price', 'Details', 'Year', 'Location', 'Seats', 'Rating'];
+            // Handle car or location-related queries
+            let result = identifyCarOrLocation(message);
+            if (result) {
+                if (result.type === 'car') {
+                    const car = result.value;
+                    conversationContext.lastCar = car;
+                    conversationContext.lastTopic = 'car';
+                    quickReplies = ['Price', 'Details', 'Year', 'Location', 'Seats', 'Rating'];
+                    if (message.includes("price") || message.includes("cost") || message.includes("rate")) {
+                        return `The price for the ${car.brand} ${car.model} is $${car.pricePerDay} per day.`;
+                    } else if (message.includes("details") || message.includes("description") || message.includes("specs")) {
+                        return `Details for the ${car.brand} ${car.model}: ${car.description}`;
+                    } else if (message.includes("year") || message.includes("model year")) {
+                        return `The ${car.brand} ${car.model} is from ${car.year}.`;
+                    } else if (message.includes("location") || message.includes("where")) {
+                        return `The ${car.brand} ${car.model} is located in ${car.location}.`;
+                    } else if (message.includes("seats") || message.includes("capacity")) {
+                        return `The ${car.brand} ${car.model} has ${car.seats} seats.`;
+                    } else if (message.includes("rating") || message.includes("reviews")) {
+                        return `The ${car.brand} ${car.model} has a rating of ${car.rating}.`;
+                    } else if (message.includes("book") || message.includes("reserve") || message.includes("availability")) {
+                        quickReplies.push('Contact Info');
+                        return `The ${car.brand} ${car.model} is ${car.availability.toLowerCase()} for booking. Please contact us for reservations!`;
+                    } else {
+                        return `Details for the ${car.brand} ${car.model}: ${car.description} Would you like to know more about its price, location, or other details?`;
+                    }
+                } else if (result.type === 'location') {
+                    const location = result.value.charAt(0).toUpperCase() + result.value.slice(1);
+                    const matchedCars = result.cars;
+                    conversationContext.lastLocation = location;
+                    conversationContext.lastTopic = 'location';
+                    quickReplies = matchedCars.map(car => `${car.brand} ${car.model}`);
+                    if (matchedCars.length > 0) {
+                        return `Available cars in ${location}: ${matchedCars.map(car => `${car.brand} ${car.model}`).join(', ')}. Which one would you like to know about?`;
+                    } else {
+                        return `No cars are available in ${location}. Try another location like Colombo, Kalutara, or Negombo, or contact us for assistance: ${companyDetails.contact}`;
+                    }
+                }
             }
-            if (!car) {
-                quickReplies = cars.map(c => `${c.brand} ${c.model}`);
-                return "I have information on the following cars: " + cars.map(c => `${c.brand} ${c.model}`).join(', ') + ". Which one would you like to know about?";
-            }
-            if (message.includes("price") || message.includes("cost") || message.includes("rate")) {
-                return `The price for the ${car.brand} ${car.model} is $${car.pricePerDay} per day.`;
-            } else if (message.includes("details") || message.includes("description") || message.includes("specs")) {
-                return `Details for the ${car.brand} ${car.model}: ${car.description}`;
-            } else if (message.includes("year") || message.includes("model year")) {
-                return `The ${car.brand} ${car.model} is from ${car.year}.`;
-            } else if (message.includes("location") || message.includes("where")) {
-                return `The ${car.brand} ${car.model} is located in ${car.location}.`;
-            } else if (message.includes("seats") || message.includes("capacity")) {
-                return `The ${car.brand} ${car.model} has ${car.seats} seats.`;
-            } else if (message.includes("rating") || message.includes("reviews")) {
-                return `The ${car.brand} ${car.model} has a rating of ${car.rating}.`;
-            } else if (message.includes("book") || message.includes("reserve") || message.includes("availability")) {
-                quickReplies.push('Contact Info');
-                return `The ${car.brand} ${car.model} is available for booking. Please contact us for reservations!`;
-            } else {
-                return `The ${car.brand} ${car.model} is an excellent choice! ${car.description} Would you like to know more about its price, location, or other details?`;
-            }
+
+            // Default response for unrelated queries
+            quickReplies = ['Contact Info', 'Our Services'];
+            return "Please specify a car or location to learn more about our vehicles.";
         }
 
         function sendMessage() {
@@ -460,7 +563,9 @@
                 // Generate and add AI response
                 const response = generateResponse(userInput);
                 const quickReplies = conversationContext.lastTopic === 'car' ? ['Price', 'Details', 'Year', 'Location', 'Seats', 'Rating'] : 
-                                     conversationContext.lastTopic === 'company' ? ['Why Choose Us', 'Contact Info', 'Our Services'] : [];
+                                     conversationContext.lastTopic === 'company' ? ['Why Choose Us', 'Contact Info', 'Our Services'] :
+                                     conversationContext.lastTopic === 'location' ? cars.filter(car => car.location.toLowerCase().includes(conversationContext.lastLocation.toLowerCase())).map(car => `${car.brand} ${car.model}`) : 
+                                     ['Contact Info', 'Our Services'];
                 appendMessage('ai', response, new Date().toLocaleTimeString(), quickReplies);
             }, 1000);  // 1-second delay for "thinking"
         }
@@ -469,8 +574,8 @@
         $('#clear-chat').click(function() {
             $('#chat-messages').empty();
             localStorage.removeItem('chatHistory');
-            conversationContext = { lastCar: null, lastTopic: null };
-            appendMessage('ai', "Chat cleared. Hello! I'm your advanced chatbot for GoRydz. Ask me about our cars, services, or why to choose GoRydz!");
+            conversationContext = { lastCar: null, lastTopic: null, lastLocation: null };
+            appendMessage('ai', "Chat cleared. Hello! I'm your advanced chatbot for GoRydz. Ask me about our cars, services, or a location like Colombo!");
         });
 
         // Send message on Enter key
@@ -487,7 +592,7 @@
         $(document).ready(function() {
             loadChatHistory();
             if ($('#chat-messages').children().length === 0) {
-                appendMessage('ai', "Hello! I'm your advanced chatbot for GoRydz. Ask me about our cars, services, or why to choose GoRydz!");
+                appendMessage('ai', "Hello! I'm your advanced chatbot for GoRydz. Ask me about our cars, services, or a location like Colombo!");
             }
         });
     </script>

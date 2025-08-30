@@ -6,10 +6,25 @@ class CarImageInline(admin.TabularInline):
     extra = 3
 
 class CarAdmin(admin.ModelAdmin):
-    list_display = ['name', 'brand', 'year', 'price_per_day', 'available']
-    list_filter = ['brand', 'year', 'available']
-    search_fields = ['name', 'brand']
+    list_display = ['name', 'brand', 'year', 'price_per_day', 'seats', 'location', 'available']
+    list_filter = ['brand', 'year', 'available', 'seats', 'location']
+    search_fields = ['name', 'brand', 'location']
     inlines = [CarImageInline]
+
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('name', 'brand', 'year', 'description')
+        }),
+        ('Pricing & Availability', {
+            'fields': ('price_per_day', 'available')
+        }),
+        ('Car Details', {
+            'fields': ('seats', 'location')
+        }),
+        ('Images', {
+            'fields': ('main_image',)
+        }),
+    )
 
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ['name', 'comment', 'created_at']

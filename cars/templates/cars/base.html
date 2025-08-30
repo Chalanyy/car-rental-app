@@ -558,6 +558,38 @@
                         </a>
                     </li>
                 </ul>
+                <!-- Simple header chatbot button -->
+<div class="header-chat-button">
+    <a href="{% url 'chat' %}" class="btn-chat">
+        🤖 AI Chat
+    </a>
+</div>
+
+<style>
+.header-chat-button {
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.btn-chat {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-chat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    text-decoration: none !important;
+    color: white !important;
+}
+</style>
             </nav>
         </div>
     </header>

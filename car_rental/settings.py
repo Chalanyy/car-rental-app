@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'cars',
     'car_rental',
     'rest_framework',
+    'chatbot',
     
 ]
 

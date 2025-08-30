@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Chatbot</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0c0c0cff 0%, #0d0d0eff 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #080808ff 0%, #060707ff 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        #chat-messages {
+            height: 400px;
+            padding: 30px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .message {
+            margin: 15px 0;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .user-message {
+            text-align: right;
+        }
+        
+        .user-message .bubble {
+            background: linear-gradient(135deg, #0b0b0cff 0%, #118ee2ff 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 25px 25px 5px 25px;
+            display: inline-block;
+            max-width: 70%;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .ai-message .bubble {
+            background: white;
+            color: #333;
+            padding: 15px 20px;
+            border-radius: 25px 25px 25px 5px;
+            display: inline-block;
+            max-width: 70%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #e9ecef;
+        }
+        
+        .input-area {
+            padding: 30px;
+            background: white;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        #user-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        #user-input:focus {
+            border-color: #667eea;
+        }
+        
+        .send-button {
+            background: linear-gradient(135deg, #0aa2adff 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .send-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .send-button:active {
+            transform: translateY(0);
+        }
+        
+        .typing {
+            color: #666;
+            font-style: italic;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        .robot-emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Smart Chatbot</h1>
+            <p> Built with Love</p>
+        </div>
+        
+        <div id="chat-messages">
+            <div class="message ai-message">
+                <div class="bubble">
+                    <span class="robot-emoji">🤖</span>
+                    Hello! I'm your friendly chatbot. I'm ready to chat with you! Ask me anything or just say hi!
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message here...">
+            <button class="send-button" onclick="sendMessage()">Send 🚀</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var userInput = $('#user-input').val().trim();
+            if (userInput === '') return;
+            
+            // Add user message
+            $('#chat-messages').append(`
+                <div class="message user-message">
+                    <div class="bubble">
+                        ${userInput}
+                    </div>
+                </div>
+            `);
+            
+            // Clear input
+            $('#user-input').val('');
+            
+            // Show typing indicator
+            $('#chat-messages').append(`
+                <div class="message ai-message typing-message">
+                    <div class="bubble typing">
+                        <span class="robot-emoji">🤖</span>
+                        Thinking...
+                    </div>
+                </div>
+            `);
+            
+            // Scroll to bottom
+            $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+            
+            // Send to server
+            $.ajax({
+                url: '{% url "chat" %}',
+                type: 'POST',
+                data: { 'message': userInput },
+                success: function(response) {
+                    // Remove typing indicator
+                    $('.typing-message').remove();
+                    
+                    // Add AI response
+                    $('#chat-messages').append(`
+                        <div class="message ai-message">
+                            <div class="bubble">
+                                <span class="robot-emoji">🤖</span>
+                                ${response.message}
+                            </div>
+                        </div>
+                    `);
+                    
+                    // Scroll to bottom
+                    $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+                },
+                error: function() {
+                    $('.typing-message').remove();
+                    $('#chat-messages').append(`
+                        <div class="message ai-message">
+                            <div class="bubble">
+                                <span class="robot-emoji">🤖</span>
+                                Sorry, something went wrong. Please try again!
+                            </div>
+                        </div>
+                    `);
+                }
+            });
+        }
+        
+        // Send message on Enter key
+        $('#user-input').keypress(function(e) {
+            if (e.which == 13) {
+                sendMessage();
+            }
+        });
+        
+        // Auto-focus input
+        $('#user-input').focus();
+    </script>
+</body>
+</html>

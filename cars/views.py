@@ -233,3 +233,4 @@ def payment_list(request):
 def receipt_list(request):
     bookings = Booking.objects.filter(customer_email=request.user.email)
     return render(request, 'cars/receipt_list.html', {'bookings': bookings})
+

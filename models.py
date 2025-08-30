@@ -4,6 +4,8 @@ class Car(models.Model):
     name = models.CharField(max_length=100)
     brand = models.CharField(max_length=50)
     year = models.IntegerField()
+    seats = models.IntegerField(help_text="Number of seats in the car")
+    location = models.CharField(max_length=200, help_text="Where the car is located")
     price_per_day = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
     main_image = models.ImageField(upload_to='cars/')

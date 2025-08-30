@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Chatbot</title>
+    <title>Advanced GoRydz Chatbot</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         * {
@@ -33,6 +33,7 @@
             padding: 30px;
             text-align: center;
             color: white;
+            position: relative;
         }
         
         .header h1 {
@@ -43,6 +44,24 @@
         .header p {
             font-size: 1.2em;
             opacity: 0.9;
+        }
+        
+        #clear-chat {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        #clear-chat:hover {
+            background: rgba(255,255,255,0.4);
         }
         
         #chat-messages {
@@ -56,6 +75,14 @@
         .message {
             margin: 15px 0;
             animation: fadeIn 0.5s ease-in;
+            position: relative;
+        }
+        
+        .message .timestamp {
+            font-size: 0.8em;
+            color: #999;
+            margin-top: 5px;
+            text-align: right;
         }
         
         .user-message {
@@ -81,6 +108,27 @@
             max-width: 70%;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             border: 2px solid #e9ecef;
+        }
+        
+        .quick-replies {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .quick-reply-btn {
+            background: #e9ecef;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .quick-reply-btn:hover {
+            background: #d1d5db;
         }
         
         .input-area {
@@ -140,48 +188,257 @@
             0%, 100% { opacity: 0.5; }
             50% { opacity: 1; }
         }
-        
-        .robot-emoji {
-            font-size: 1.2em;
-            margin-right: 5px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🤖 Smart Chatbot</h1>
-            <p> Built with Love</p>
+            <h1>Advanced GoRydz Chatbot</h1>
+            <p>Powered by Smart AI - Built with Love</p>
+            <button id="clear-chat">Clear Chat</button>
         </div>
         
         <div id="chat-messages">
-            <div class="message ai-message">
-                <div class="bubble">
-                    <span class="robot-emoji">🤖</span>
-                    Hello! I'm your friendly chatbot. I'm ready to chat with you! Ask me anything or just say hi!
-                </div>
-            </div>
+            <!-- Messages will be loaded here -->
         </div>
         
         <div class="input-area">
             <input type="text" id="user-input" placeholder="Type your message here...">
-            <button class="send-button" onclick="sendMessage()">Send 🚀</button>
+            <button class="send-button" onclick="sendMessage()">Send</button>
         </div>
     </div>
 
     <script>
+        // GoRydz company details
+        const companyDetails = {
+            whyChoose: "Experience the ultimate car rental service with our commitment to excellence and customer satisfaction. We offer a wide selection of premium vehicles, transparent pricing with no hidden fees, 24/7 customer support, an easy online booking system, flexible rental periods, and fully insured vehicles.",
+            contact: "Contact us at +94 77 123 4567, email: info@gorydz.com, address: 123 Main Street, Negombo, Sri Lanka. Operating hours: Monday to Sunday, 8:00 AM to 10:00 PM.",
+            services: "From economy cars to luxury vehicles, we have the perfect ride for every occasion. Our services include daily and weekly rentals, airport pickup/drop-off, long-term leasing, corporate fleet solutions, wedding and event cars, and GPS navigation systems."
+        };
+
+        // Car details array
+        const cars = [
+            {
+                brand: "Mitsubishi",
+                model: "Lancer Ex",
+                year: 2008,
+                location: "Kalutara, Colombo",
+                seats: 4,
+                pricePerDay: 4000.00,
+                rating: "4.8 (127 reviews)",
+                description: "Year: 2008, Transmission: Automatic, Fuel Type: Petrol, Engine: 1,500cc, Mileage: 212,000 km, Condition: Used, well-maintained, Body Type: Saloon"
+            },
+            {
+                brand: "BMW",
+                model: "X1",
+                year: 2020,
+                location: "Main Office",
+                seats: 4,
+                pricePerDay: 7000.00,
+                rating: "4.8 (127 reviews)",
+                description: "Condition: Used, Transmission: Automatic, Body Type: SUV / 4x4, Fuel Type: Petrol, Engine Capacity: 1,500 cc, Mileage: 87,000 km"
+            },
+            {
+                brand: "Audi",
+                model: "A3",
+                year: 2015,
+                location: "Main Office",
+                seats: 4,
+                pricePerDay: 5000.00,
+                rating: "4.8 (127 reviews)",
+                description: "Condition: Used, Transmission: Automatic, Body Type: Saloon, Fuel Type: Petrol, Engine Capacity: 1,800 cc, Mileage: 60,000 km"
+            },
+            {
+                brand: "Toyota",
+                model: "Axio Corolla",
+                year: 2024,
+                location: "Main Office",
+                seats: 4,
+                pricePerDay: 5200.00,
+                rating: "4.8 (127 reviews)",
+                description: "Condition: New, Transmission: Automatic, Body Type: Saloon, Fuel Type: Petrol, Engine Capacity: 1,500 cc, Mileage: 102 km"
+            },
+            {
+                brand: "Honda",
+                model: "Vezel Z",
+                year: 2025,
+                location: "Main Office",
+                seats: 4,
+                pricePerDay: 6000.00,
+                rating: "4.8 (127 reviews)",
+                description: "Condition: Used, Transmission: Tiptronic, Body Type: Saloon, Fuel Type: Hybrid, Engine Capacity: 1,500 cc, Mileage: 169 km"
+            },
+            {
+                brand: "Toyota",
+                model: "Vitz",
+                year: 2015,
+                location: "Main Office",
+                seats: 4,
+                pricePerDay: 3000.00,
+                rating: "4.8 (127 reviews)",
+                description: "Condition: Used, Transmission: Automatic, Body Type: Hatchback, Fuel Type: Petrol, Engine Capacity: 1,000 cc, Mileage: 160,000 km"
+            },
+            {
+                brand: "Toyota",
+                model: "Premio",
+                year: 2014,
+                location: "Kalutara, Colombo, Galle",
+                seats: 5,
+                pricePerDay: 4500.00,
+                rating: "4.8 (127 reviews)",
+                description: "Condition: Used, Transmission: Automatic, Body Type: Saloon, Fuel Type: Petrol, Engine Capacity: 1,500 cc, Mileage: 160,000 km"
+            }
+        ];
+
+        // Conversation context (for multi-turn awareness)
+        let conversationContext = {
+            lastCar: null,  // Remember the last mentioned car
+            lastTopic: null  // 'car' or 'company'
+        };
+
+        // Load chat history from localStorage
+        function loadChatHistory() {
+            const history = JSON.parse(localStorage.getItem('chatHistory')) || [];
+            history.forEach(msg => {
+                appendMessage(msg.type, msg.content, msg.timestamp, msg.quickReplies);
+            });
+            $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+        }
+
+        // Save chat history to localStorage
+        function saveChatHistory() {
+            const messages = [];
+            $('#chat-messages .message').each(function() {
+                const type = $(this).hasClass('user-message') ? 'user' : 'ai';
+                const content = $(this).find('.bubble').text();
+                const timestamp = $(this).find('.timestamp').text();
+                const quickReplies = [];
+                $(this).find('.quick-reply-btn').each(function() {
+                    quickReplies.push($(this).text());
+                });
+                messages.push({ type, content, timestamp, quickReplies });
+            });
+            localStorage.setItem('chatHistory', JSON.stringify(messages));
+        }
+
+        // Append message to chat
+        function appendMessage(type, content, timestamp = new Date().toLocaleTimeString(), quickReplies = []) {
+            const messageClass = type === 'user' ? 'user-message' : 'ai-message';
+            let html = `
+                <div class="message ${messageClass}">
+                    <div class="bubble">${content}</div>
+                    <div class="timestamp">${timestamp}</div>
+            `;
+            if (quickReplies.length > 0) {
+                html += '<div class="quick-replies">';
+                quickReplies.forEach(reply => {
+                    html += `<button class="quick-reply-btn" onclick="handleQuickReply('${reply}')">${reply}</button>`;
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+            $('#chat-messages').append(html);
+            $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+            saveChatHistory();
+        }
+
+        // Handle quick reply clicks
+        function handleQuickReply(reply) {
+            $('#user-input').val(reply);
+            sendMessage();
+        }
+
+        // Function to identify the car from the message with regex for better matching
+        function identifyCar(message) {
+            message = message.toLowerCase();
+            const patterns = {
+                "mitsubishi lancer": /mitsubishi|lancer/,
+                "bmw x1": /bmw|x1/,
+                "audi a3": /audi|a3/,
+                "toyota axio corolla": /toyota.*(axio|corolla)/,
+                "honda vezel": /honda|vezel/,
+                "toyota vitz": /toyota.*vitz/,
+                "toyota premio": /toyota.*premio/
+            };
+            for (const [key, pattern] of Object.entries(patterns)) {
+                if (pattern.test(message)) {
+                    const [brand, model] = key.split(' ');
+                    return cars.find(car => car.brand.toLowerCase() === brand && car.model.toLowerCase() === model.replace('ex', 'Ex'));
+                }
+            }
+            return null;
+        }
+
+        // Function to check if the message is about a car or company with improved keywords
+        function isRelatedQuery(message) {
+            const keywords = [
+                "mitsubishi", "lancer", "bmw", "x1", "audi", "a3", "toyota", "axio", "corolla", "honda", "vezel",
+                "vitz", "premio", "car", "price", "details", "seats", "year", "location", "rating", "description",
+                "gorydz", "why choose", "contact", "services", "rental", "booking", "support", "fleet", "airport",
+                "wedding", "leasing", "gps", "book", "reserve", "availability"
+            ];
+            return keywords.some(keyword => message.toLowerCase().includes(keyword));
+        }
+
+        // Function to generate response with context awareness
+        function generateResponse(message) {
+            message = message.toLowerCase();
+            let quickReplies = [];
+
+            // Handle company-related queries
+            if (message.includes("why choose") || message.includes("gorydz")) {
+                conversationContext.lastTopic = 'company';
+                quickReplies = ['Contact Info', 'Our Services'];
+                return `GoRydz offers: ${companyDetails.whyChoose}`;
+            } else if (message.includes("contact")) {
+                conversationContext.lastTopic = 'company';
+                quickReplies = ['Why Choose Us', 'Our Services'];
+                return `Contact GoRydz at: ${companyDetails.contact}`;
+            } else if (message.includes("services") || message.includes("rental") || message.includes("booking") ||
+                       message.includes("fleet") || message.includes("airport") || message.includes("wedding") ||
+                       message.includes("leasing") || message.includes("gps")) {
+                conversationContext.lastTopic = 'company';
+                quickReplies = ['Why Choose Us', 'Contact Info'];
+                return `GoRydz provides: ${companyDetails.services}`;
+            }
+
+            // Handle car-related queries with context
+            let car = identifyCar(message) || conversationContext.lastCar;
+            if (car) {
+                conversationContext.lastCar = car;
+                conversationContext.lastTopic = 'car';
+                quickReplies = ['Price', 'Details', 'Year', 'Location', 'Seats', 'Rating'];
+            }
+            if (!car) {
+                quickReplies = cars.map(c => `${c.brand} ${c.model}`);
+                return "I have information on the following cars: " + cars.map(c => `${c.brand} ${c.model}`).join(', ') + ". Which one would you like to know about?";
+            }
+            if (message.includes("price") || message.includes("cost") || message.includes("rate")) {
+                return `The price for the ${car.brand} ${car.model} is $${car.pricePerDay} per day.`;
+            } else if (message.includes("details") || message.includes("description") || message.includes("specs")) {
+                return `Details for the ${car.brand} ${car.model}: ${car.description}`;
+            } else if (message.includes("year") || message.includes("model year")) {
+                return `The ${car.brand} ${car.model} is from ${car.year}.`;
+            } else if (message.includes("location") || message.includes("where")) {
+                return `The ${car.brand} ${car.model} is located in ${car.location}.`;
+            } else if (message.includes("seats") || message.includes("capacity")) {
+                return `The ${car.brand} ${car.model} has ${car.seats} seats.`;
+            } else if (message.includes("rating") || message.includes("reviews")) {
+                return `The ${car.brand} ${car.model} has a rating of ${car.rating}.`;
+            } else if (message.includes("book") || message.includes("reserve") || message.includes("availability")) {
+                quickReplies.push('Contact Info');
+                return `The ${car.brand} ${car.model} is available for booking. Please contact us for reservations!`;
+            } else {
+                return `The ${car.brand} ${car.model} is an excellent choice! ${car.description} Would you like to know more about its price, location, or other details?`;
+            }
+        }
+
         function sendMessage() {
             var userInput = $('#user-input').val().trim();
             if (userInput === '') return;
             
             // Add user message
-            $('#chat-messages').append(`
-                <div class="message user-message">
-                    <div class="bubble">
-                        ${userInput}
-                    </div>
-                </div>
-            `);
+            appendMessage('user', userInput);
             
             // Clear input
             $('#user-input').val('');
@@ -190,51 +447,32 @@
             $('#chat-messages').append(`
                 <div class="message ai-message typing-message">
                     <div class="bubble typing">
-                        <span class="robot-emoji">🤖</span>
                         Thinking...
                     </div>
                 </div>
             `);
             
-            // Scroll to bottom
-            $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
-            
-            // Send to server
-            $.ajax({
-                url: '{% url "chat" %}',
-                type: 'POST',
-                data: { 'message': userInput },
-                success: function(response) {
-                    // Remove typing indicator
-                    $('.typing-message').remove();
-                    
-                    // Add AI response
-                    $('#chat-messages').append(`
-                        <div class="message ai-message">
-                            <div class="bubble">
-                                <span class="robot-emoji">🤖</span>
-                                ${response.message}
-                            </div>
-                        </div>
-                    `);
-                    
-                    // Scroll to bottom
-                    $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
-                },
-                error: function() {
-                    $('.typing-message').remove();
-                    $('#chat-messages').append(`
-                        <div class="message ai-message">
-                            <div class="bubble">
-                                <span class="robot-emoji">🤖</span>
-                                Sorry, something went wrong. Please try again!
-                            </div>
-                        </div>
-                    `);
-                }
-            });
+            // Simulate delay for more realistic AI feel
+            setTimeout(() => {
+                // Remove typing indicator
+                $('.typing-message').remove();
+                
+                // Generate and add AI response
+                const response = generateResponse(userInput);
+                const quickReplies = conversationContext.lastTopic === 'car' ? ['Price', 'Details', 'Year', 'Location', 'Seats', 'Rating'] : 
+                                     conversationContext.lastTopic === 'company' ? ['Why Choose Us', 'Contact Info', 'Our Services'] : [];
+                appendMessage('ai', response, new Date().toLocaleTimeString(), quickReplies);
+            }, 1000);  // 1-second delay for "thinking"
         }
-        
+
+        // Clear chat button
+        $('#clear-chat').click(function() {
+            $('#chat-messages').empty();
+            localStorage.removeItem('chatHistory');
+            conversationContext = { lastCar: null, lastTopic: null };
+            appendMessage('ai', "Chat cleared. Hello! I'm your advanced chatbot for GoRydz. Ask me about our cars, services, or why to choose GoRydz!");
+        });
+
         // Send message on Enter key
         $('#user-input').keypress(function(e) {
             if (e.which == 13) {
@@ -244,6 +482,14 @@
         
         // Auto-focus input
         $('#user-input').focus();
+
+        // Load initial history and greeting if no history
+        $(document).ready(function() {
+            loadChatHistory();
+            if ($('#chat-messages').children().length === 0) {
+                appendMessage('ai', "Hello! I'm your advanced chatbot for GoRydz. Ask me about our cars, services, or why to choose GoRydz!");
+            }
+        });
     </script>
 </body>
 </html>

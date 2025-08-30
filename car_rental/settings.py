@@ -41,15 +41,14 @@ ROOT_URLCONF = 'car_rental.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # IMPORTANT: Add this for custom templates
-        'APP_DIRS': True,
+        'DIRS': [],  # This should be empty or include your template dirs
+        'APP_DIRS': True,  # This should be True
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media',  # IMPORTANT: Add this for MEDIA_URL
             ],
         },
     },
@@ -88,7 +87,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Media files (uploads) - CORRECTED
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'  # Use Path object consistently
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Use Path object consistently
 
 # Email settings for development
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>Advanced GoRydz Chatbot</title>
+=======
+    <title>Simple Chatbot</title>
+>>>>>>> cars-branch
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         * {
@@ -33,7 +37,10 @@
             padding: 30px;
             text-align: center;
             color: white;
+<<<<<<< HEAD
             position: relative;
+=======
+>>>>>>> cars-branch
         }
         
         .header h1 {
@@ -46,6 +53,7 @@
             opacity: 0.9;
         }
         
+<<<<<<< HEAD
         #clear-chat {
             position: absolute;
             top: 10px;
@@ -64,6 +72,8 @@
             background: rgba(255,255,255,0.4);
         }
         
+=======
+>>>>>>> cars-branch
         #chat-messages {
             height: 400px;
             padding: 30px;
@@ -75,6 +85,7 @@
         .message {
             margin: 15px 0;
             animation: fadeIn 0.5s ease-in;
+<<<<<<< HEAD
             position: relative;
         }
         
@@ -83,6 +94,8 @@
             color: #999;
             margin-top: 5px;
             text-align: right;
+=======
+>>>>>>> cars-branch
         }
         
         .user-message {
@@ -110,6 +123,7 @@
             border: 2px solid #e9ecef;
         }
         
+<<<<<<< HEAD
         .quick-replies {
             margin-top: 10px;
             display: flex;
@@ -131,6 +145,8 @@
             background: #d1d5db;
         }
         
+=======
+>>>>>>> cars-branch
         .input-area {
             padding: 30px;
             background: white;
@@ -188,11 +204,20 @@
             0%, 100% { opacity: 0.5; }
             50% { opacity: 1; }
         }
+<<<<<<< HEAD
+=======
+        
+        .robot-emoji {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+>>>>>>> cars-branch
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
+<<<<<<< HEAD
             <h1>Advanced GoRydz Chatbot</h1>
             <p>Powered by Smart AI - Built with Love</p>
             <button id="clear-chat">Clear Chat</button>
@@ -200,15 +225,33 @@
         
         <div id="chat-messages">
             <!-- Messages will be loaded here -->
+=======
+            <h1>🤖 Smart Chatbot</h1>
+            <p> Built with Love</p>
+        </div>
+        
+        <div id="chat-messages">
+            <div class="message ai-message">
+                <div class="bubble">
+                    <span class="robot-emoji">🤖</span>
+                    Hello! I'm your friendly chatbot. I'm ready to chat with you! Ask me anything or just say hi!
+                </div>
+            </div>
+>>>>>>> cars-branch
         </div>
         
         <div class="input-area">
             <input type="text" id="user-input" placeholder="Type your message here...">
+<<<<<<< HEAD
             <button class="send-button" onclick="sendMessage()">Send</button>
+=======
+            <button class="send-button" onclick="sendMessage()">Send 🚀</button>
+>>>>>>> cars-branch
         </div>
     </div>
 
     <script>
+<<<<<<< HEAD
         // GoRydz company details
         const companyDetails = {
             whyChoose: "Experience the ultimate car rental service with our commitment to excellence and customer satisfaction. We offer a wide selection of premium vehicles, transparent pricing with no hidden fees, 24/7 customer support, an easy online booking system, flexible rental periods, and fully insured vehicles.",
@@ -536,12 +579,24 @@
             return "Please specify a car or location to learn more about our vehicles.";
         }
 
+=======
+>>>>>>> cars-branch
         function sendMessage() {
             var userInput = $('#user-input').val().trim();
             if (userInput === '') return;
             
             // Add user message
+<<<<<<< HEAD
             appendMessage('user', userInput);
+=======
+            $('#chat-messages').append(`
+                <div class="message user-message">
+                    <div class="bubble">
+                        ${userInput}
+                    </div>
+                </div>
+            `);
+>>>>>>> cars-branch
             
             // Clear input
             $('#user-input').val('');
@@ -550,11 +605,16 @@
             $('#chat-messages').append(`
                 <div class="message ai-message typing-message">
                     <div class="bubble typing">
+<<<<<<< HEAD
+=======
+                        <span class="robot-emoji">🤖</span>
+>>>>>>> cars-branch
                         Thinking...
                     </div>
                 </div>
             `);
             
+<<<<<<< HEAD
             // Simulate delay for more realistic AI feel
             setTimeout(() => {
                 // Remove typing indicator
@@ -578,6 +638,47 @@
             appendMessage('ai', "Chat cleared. Hello! I'm your advanced chatbot for GoRydz. Ask me about our cars, services, or a location like Colombo!");
         });
 
+=======
+            // Scroll to bottom
+            $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+            
+            // Send to server
+            $.ajax({
+                url: '{% url "chat" %}',
+                type: 'POST',
+                data: { 'message': userInput },
+                success: function(response) {
+                    // Remove typing indicator
+                    $('.typing-message').remove();
+                    
+                    // Add AI response
+                    $('#chat-messages').append(`
+                        <div class="message ai-message">
+                            <div class="bubble">
+                                <span class="robot-emoji">🤖</span>
+                                ${response.message}
+                            </div>
+                        </div>
+                    `);
+                    
+                    // Scroll to bottom
+                    $('#chat-messages').scrollTop($('#chat-messages')[0].scrollHeight);
+                },
+                error: function() {
+                    $('.typing-message').remove();
+                    $('#chat-messages').append(`
+                        <div class="message ai-message">
+                            <div class="bubble">
+                                <span class="robot-emoji">🤖</span>
+                                Sorry, something went wrong. Please try again!
+                            </div>
+                        </div>
+                    `);
+                }
+            });
+        }
+        
+>>>>>>> cars-branch
         // Send message on Enter key
         $('#user-input').keypress(function(e) {
             if (e.which == 13) {
@@ -587,6 +688,7 @@
         
         // Auto-focus input
         $('#user-input').focus();
+<<<<<<< HEAD
 
         // Load initial history and greeting if no history
         $(document).ready(function() {
@@ -595,6 +697,8 @@
                 appendMessage('ai', "Hello! I'm your advanced chatbot for GoRydz. Ask me about our cars, services, or a location like Colombo!");
             }
         });
+=======
+>>>>>>> cars-branch
     </script>
 </body>
 </html>

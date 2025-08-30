@@ -527,26 +527,12 @@
             flex: 1;
             position: relative;
             min-height: 100vh;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            background: url('media/cars/bmw.jpg') no-repeat center center/cover;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             animation: slideInFromRight 1.5s ease-out;
-        }
-
-        /* Car placeholder with SVG */
-        .car-placeholder {
-            width: 80%;
-            max-width: 600px;
-            height: auto;
-            opacity: 0.7;
-            transition: all 0.3s ease;
-        }
-
-        .car-placeholder:hover {
-            opacity: 1;
-            transform: scale(1.05);
         }
 
         /* Gradient overlay to blend with black background */
@@ -742,10 +728,6 @@
                 padding: 30px;
                 margin: 20px;
             }
-
-            .auth-title {
-                font-size: 1.8rem;
-            }
         }
 
         @media (max-width: 480px) {
@@ -874,6 +856,7 @@
         </div>
     </div>
 
+
     <!-- Page transition overlay -->
     <div class="page-transition" id="pageTransition">
         <div class="transition-content">
@@ -893,7 +876,7 @@
             
             <p class="tagline typewriter">Drive your way, anytime, anywhere — only with <strong>GoRyDz</strong>.</p>
             
-            <button class="cta-button" id="exploreCarsBtn">Explore Cars</button>
+            <a href="/cars/" class="cta-button" id="exploreCarsBtn">Explore Cars</a>
             
             <div class="features">
                 <div class="feature">
@@ -917,51 +900,7 @@
         <!-- Right side - Car image -->
         <div class="right-content">
             <div class="car-image-container">
-                <!-- SVG Car Placeholder -->
-                <svg class="car-placeholder" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="carGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#4a5568;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#2d3748;stop-opacity:1" />
-                        </linearGradient>
-                        <linearGradient id="windowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#63b3ed;stop-opacity:0.8" />
-                            <stop offset="100%" style="stop-color:#4299e1;stop-opacity:0.6" />
-                        </linearGradient>
-                    </defs>
-                    
-                    <!-- Car Body -->
-                    <path d="M150 250 L200 200 L600 200 L650 250 L650 300 L600 320 L550 320 L530 300 L270 300 L250 320 L200 320 L150 300 Z" 
-                          fill="url(#carGradient)" stroke="#ffffff" stroke-width="2"/>
-                    
-                    <!-- Car Roof -->
-                    <path d="M250 200 L280 150 L520 150 L550 200 Z" 
-                          fill="url(#carGradient)" stroke="#ffffff" stroke-width="2"/>
-                    
-                    <!-- Windows -->
-                    <path d="M260 190 L290 160 L510 160 L540 190 Z" 
-                          fill="url(#windowGradient)" stroke="#ffffff" stroke-width="1"/>
-                    
-                    <!-- Front Wheel -->
-                    <circle cx="220" cy="320" r="35" fill="#2d3748" stroke="#ffffff" stroke-width="3"/>
-                    <circle cx="220" cy="320" r="20" fill="#4a5568" stroke="#ffffff" stroke-width="1"/>
-                    
-                    <!-- Rear Wheel -->
-                    <circle cx="580" cy="320" r="35" fill="#2d3748" stroke="#ffffff" stroke-width="3"/>
-                    <circle cx="580" cy="320" r="20" fill="#4a5568" stroke="#ffffff" stroke-width="1"/>
-                    
-                    <!-- Headlights -->
-                    <ellipse cx="630" cy="240" rx="15" ry="25" fill="#ffd700" stroke="#ffffff" stroke-width="1"/>
-                    
-                    <!-- Grille -->
-                    <rect x="620" y="220" width="30" height="40" fill="#1a202c" stroke="#ffffff" stroke-width="1"/>
-                    
-                    <!-- Door Handle -->
-                    <rect x="400" y="240" width="20" height="5" rx="2" fill="#ffffff"/>
-                    
-                    <!-- Side Mirror -->
-                    <ellipse cx="280" cy="180" rx="8" ry="12" fill="#4a5568" stroke="#ffffff" stroke-width="1"/>
-                </svg>
+                <!-- Car image is now the background, blending seamlessly -->
             </div>
         </div>
     </div>
@@ -979,20 +918,19 @@
             exploreBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 
-                // Show message instead of navigating (since cars page doesn't exist yet)
-                showMessage('Cars page coming soon! This is a demo landing page.', 'info');
+                // Add exit animations to content
+                mainContainer.classList.add('page-exit');
                 
-                // Optional: Show transition animation anyway for demo
-                // mainContainer.classList.add('page-exit');
-                // setTimeout(() => {
-                //     pageTransition.classList.add('active');
-                // }, 200);
+                // Show transition overlay
+                setTimeout(() => {
+                    pageTransition.classList.add('active');
+                }, 200);
                 
-                // Reset after animation
-                // setTimeout(() => {
-                //     pageTransition.classList.remove('active');
-                //     mainContainer.classList.remove('page-exit');
-                // }, 2000);
+                // Navigate to cars page after animation
+                setTimeout(() => {
+                    // This will navigate to your actual cars page
+                    window.location.href = '/cars/';
+                }, 2000);
             });
 
             // Add staggered animation to features
@@ -1040,13 +978,26 @@
         }
 
         function switchTab(tab) {
+            // Update tab buttons
             const tabs = document.querySelectorAll('.auth-tab');
             tabs.forEach(t => t.classList.remove('active'));
-            document.querySelector(`.auth-tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+            event.target.classList.add('active');
 
+            // Update forms
             const forms = document.querySelectorAll('.auth-form');
             forms.forEach(f => f.classList.remove('active'));
-            document.getElementById(`${tab}Form`).classList.add('active');
+            
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.add('active');
+                // Update tab manually if called programmatically
+                document.querySelector('.auth-tab:first-child').classList.add('active');
+                document.querySelector('.auth-tab:last-child').classList.remove('active');
+            } else {
+                document.getElementById('signupForm').classList.add('active');
+                // Update tab manually if called programmatically
+                document.querySelector('.auth-tab:last-child').classList.add('active');
+                document.querySelector('.auth-tab:first-child').classList.remove('active');
+            }
         }
 
         // Handle Login
@@ -1055,6 +1006,7 @@
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
+            // Find user in stored users
             const user = users.find(u => u.email === email && u.password === password);
             
             if (user) {
@@ -1075,17 +1027,20 @@
             const password = document.getElementById('signupPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
+            // Validation
             if (password !== confirmPassword) {
                 showMessage('Passwords do not match!', 'error');
                 return;
             }
 
+            // Check if user already exists
             const existingUser = users.find(u => u.email === email);
             if (existingUser) {
                 showMessage('An account with this email already exists!', 'error');
                 return;
             }
 
+            // Create new user
             const newUser = {
                 id: Date.now(),
                 name: name,
@@ -1128,10 +1083,12 @@
 
         // Show messages
         function showMessage(message, type = 'info') {
+            // Create message element
             const messageEl = document.createElement('div');
             messageEl.className = `message message-${type}`;
             messageEl.textContent = message;
             
+            // Add styles
             messageEl.style.cssText = `
                 position: fixed;
                 top: 20px;
@@ -1155,18 +1112,18 @@
             
             document.body.appendChild(messageEl);
             
+            // Animate in
             setTimeout(() => {
                 messageEl.style.opacity = '1';
                 messageEl.style.transform = 'translateX(-50%) translateY(0)';
             }, 100);
             
+            // Remove after 4 seconds
             setTimeout(() => {
                 messageEl.style.opacity = '0';
                 messageEl.style.transform = 'translateX(-50%) translateY(-20px)';
                 setTimeout(() => {
-                    if (document.body.contains(messageEl)) {
-                        document.body.removeChild(messageEl);
-                    }
+                    document.body.removeChild(messageEl);
                 }, 300);
             }, 4000);
         }
@@ -1174,8 +1131,7 @@
         // Forgot password function
         function showForgotPassword() {
             const email = prompt('Please enter your email address to reset your password:');
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (email && emailRegex.test(email)) {
+            if (email && email.includes('@')) {
                 showMessage('Password reset link has been sent to ' + email, 'info');
             } else if (email) {
                 showMessage('Please enter a valid email address.', 'error');
@@ -1195,6 +1151,6 @@
                 closeAuth();
             }
         });
-    </script>
+        </script>
 </body>
 </html>

@@ -157,6 +157,45 @@
         // Conversation context
         let conversationContext = { lastCar: null, lastTopic: null, lastLocation: null };
 
+        // Custom messages for car details
+        function getCustomMessage(car, type) {
+            const messages = {
+                price: [
+                    `💰 Great choice! The ${car.brand} ${car.model} is priced at LKR ${car.pricePerDay.toLocaleString()} per day. This includes insurance coverage and 24/7 roadside assistance. Weekly discounts available!`,
+                    `🏷️ The daily rental rate for the ${car.brand} ${car.model} is LKR ${car.pricePerDay.toLocaleString()}. We offer competitive pricing with no hidden fees - what you see is what you pay!`,
+                    `💳 Our ${car.brand} ${car.model} is available for LKR ${car.pricePerDay.toLocaleString()} per day. This price includes comprehensive insurance and unlimited mileage within city limits.`
+                ],
+                details: [
+                    `🔍 Here are the complete specifications for the ${car.brand} ${car.model}: ${car.description}. This vehicle has been thoroughly inspected and serviced for your safety and comfort.`,
+                    `📋 Detailed information about the ${car.brand} ${car.model}: ${car.description}. All our vehicles undergo regular maintenance and safety checks before each rental.`,
+                    `⚙️ Technical details for the ${car.brand} ${car.model}: ${car.description}. This car comes with our standard warranty coverage during your rental period.`
+                ],
+                year: [
+                    `📅 The ${car.brand} ${car.model} is a ${car.year} model, ensuring you get ${car.year >= 2020 ? 'modern features and latest technology' : 'reliable performance with proven track record'}. Perfect for your journey!`,
+                    `🗓️ This ${car.brand} ${car.model} is from ${car.year}. ${car.year >= 2022 ? 'It\'s one of our newest additions with cutting-edge features!' : 'A well-maintained classic that offers great value for money.'}`,
+                    `📆 The model year is ${car.year} for this ${car.brand} ${car.model}. ${car.year >= 2021 ? 'Enjoy the latest automotive technology and safety features!' : 'Experience the reliability and durability this model is known for.'}`
+                ],
+                location: [
+                    `📍 You can pick up the ${car.brand} ${car.model} from: ${car.location}. We also offer convenient delivery service to your preferred location for an additional fee.`,
+                    `🗺️ The ${car.brand} ${car.model} is available at our ${car.location} ${car.location.includes('Main Office') ? 'location' : 'locations'}. Free pickup and drop-off available within a 5km radius!`,
+                    `📌 Available locations for the ${car.brand} ${car.model}: ${car.location}. We can arrange vehicle delivery to airports, hotels, or your doorstep - just let us know your preference!`
+                ],
+                seats: [
+                    `👥 The ${car.brand} ${car.model} comfortably seats ${car.seats} passengers. ${car.seats >= 5 ? 'Perfect for family trips or group outings!' : 'Ideal for couples or small groups who prefer comfort and fuel efficiency.'}`,
+                    `🪑 This ${car.brand} ${car.model} has a seating capacity of ${car.seats} people. All seats feature ${car.year >= 2020 ? 'premium upholstery and ergonomic design' : 'comfortable cushioning'} for long journeys.`,
+                    `👨‍👩‍👧‍👦 Seating capacity: ${car.seats} passengers in the ${car.brand} ${car.model}. ${car.seats === 4 ? 'Spacious interior with ample legroom for all passengers.' : 'Extra room for larger groups or families with luggage.'}`
+                ],
+                rating: [
+                    `⭐ Customer rating for the ${car.brand} ${car.model}: ${car.rating}. ${car.rating.includes('4.8') ? 'Our customers love this vehicle for its reliability and comfort!' : car.rating === 'Not rated' ? 'This is a newer addition to our fleet - be among the first to experience it!' : 'Highly rated by our satisfied customers!'}`,
+                    `🌟 The ${car.brand} ${car.model} has earned ${car.rating}. ${car.rating.includes('reviews') ? 'Join hundreds of satisfied customers who have enjoyed this vehicle!' : 'New to our fleet and ready to impress!'}`,
+                    `⭐ Rating: ${car.rating} for the ${car.brand} ${car.model}. ${car.rating !== 'Not rated' ? 'This high rating reflects our commitment to quality and customer satisfaction.' : 'Fresh addition to our premium fleet - experience it first!'}`
+                ]
+            };
+            
+            const messageArray = messages[type] || [`Information about ${type} for ${car.brand} ${car.model}.`];
+            return messageArray[Math.floor(Math.random() * messageArray.length)];
+        }
+
         // Load chat history
         function loadChatHistory() {
             const history = JSON.parse(localStorage.getItem('chatHistory')) || [];
@@ -206,7 +245,7 @@
                 conversationContext.lastCar = car;
                 conversationContext.lastTopic = 'car';
                 $('#user-input').val(reply);
-                const response = `Details for the ${car.brand} ${car.model}: ${car.description} Want to know about price, location, or more?`;
+                const response = getCustomMessage(car, 'details');
                 appendMessage('user', reply);
                 const quickReplies = ['Price', 'Details', 'Year', 'Location', 'Seats', 'Rating'];
                 setTimeout(() => {
@@ -275,6 +314,7 @@
         function generateResponse(message) {
             message = message.toLowerCase();
             let quickReplies = [];
+            
             if (message.includes("why choose") || message.includes("gorydz")) {
                 conversationContext.lastTopic = 'company';
                 quickReplies = ['Contact Info', 'Our Services'];
@@ -290,6 +330,34 @@
                 quickReplies = ['Why Choose Us', 'Contact Info'];
                 return `GoRydz provides: ${companyDetails.services}`;
             }
+
+            // Check for specific detail requests with context
+            if (conversationContext.lastCar) {
+                const car = conversationContext.lastCar;
+                if (message.includes("price") || message.includes("cost") || message.includes("rate")) {
+                    quickReplies = ['Details', 'Year', 'Location', 'Seats', 'Rating'];
+                    return getCustomMessage(car, 'price');
+                } else if (message.includes("details") || message.includes("description") || message.includes("specs")) {
+                    quickReplies = ['Price', 'Year', 'Location', 'Seats', 'Rating'];
+                    return getCustomMessage(car, 'details');
+                } else if (message.includes("year") || message.includes("model year")) {
+                    quickReplies = ['Price', 'Details', 'Location', 'Seats', 'Rating'];
+                    return getCustomMessage(car, 'year');
+                } else if (message.includes("location") || message.includes("where")) {
+                    quickReplies = ['Price', 'Details', 'Year', 'Seats', 'Rating'];
+                    return getCustomMessage(car, 'location');
+                } else if (message.includes("seats") || message.includes("capacity")) {
+                    quickReplies = ['Price', 'Details', 'Year', 'Location', 'Rating'];
+                    return getCustomMessage(car, 'seats');
+                } else if (message.includes("rating") || message.includes("reviews")) {
+                    quickReplies = ['Price', 'Details', 'Year', 'Location', 'Seats'];
+                    return getCustomMessage(car, 'rating');
+                } else if (message.includes("book") || message.includes("reserve") || message.includes("availability")) {
+                    quickReplies = ['Contact Info', 'Price', 'Details'];
+                    return `🎉 Great news! The ${car.brand} ${car.model} is ${car.availability.toLowerCase()} for booking. Contact us now to secure your reservation and enjoy a premium driving experience!`;
+                }
+            }
+            
             let result = identifyCarOrLocation(message);
             if (result) {
                 if (result.type === 'car') {
@@ -297,23 +365,24 @@
                     conversationContext.lastCar = car;
                     conversationContext.lastTopic = 'car';
                     quickReplies = ['Price', 'Details', 'Year', 'Location', 'Seats', 'Rating'];
+                    
                     if (message.includes("price") || message.includes("cost") || message.includes("rate")) {
-                        return `The price for the ${car.brand} ${car.model} is $${car.pricePerDay} per day.`;
+                        return getCustomMessage(car, 'price');
                     } else if (message.includes("details") || message.includes("description") || message.includes("specs")) {
-                        return `Details for the ${car.brand} ${car.model}: ${car.description}`;
+                        return getCustomMessage(car, 'details');
                     } else if (message.includes("year") || message.includes("model year")) {
-                        return `The ${car.brand} ${car.model} is from ${car.year}.`;
+                        return getCustomMessage(car, 'year');
                     } else if (message.includes("location") || message.includes("where")) {
-                        return `The ${car.brand} ${car.model} is located in ${car.location}.`;
+                        return getCustomMessage(car, 'location');
                     } else if (message.includes("seats") || message.includes("capacity")) {
-                        return `The ${car.brand} ${car.model} has ${car.seats} seats.`;
+                        return getCustomMessage(car, 'seats');
                     } else if (message.includes("rating") || message.includes("reviews")) {
-                        return `The ${car.brand} ${car.model} has a rating of ${car.rating}.`;
+                        return getCustomMessage(car, 'rating');
                     } else if (message.includes("book") || message.includes("reserve") || message.includes("availability")) {
                         quickReplies.push('Contact Info');
-                        return `The ${car.brand} ${car.model} is ${car.availability.toLowerCase()} for booking. Please contact us for reservations!`;
+                        return `🎉 The ${car.brand} ${car.model} is ${car.availability.toLowerCase()} for booking. Let's get you on the road - contact us for immediate reservation!`;
                     } else {
-                        return `Details for the ${car.brand} ${car.model}: ${car.description} Want to know about price, location, or more?`;
+                        return `✨ You've selected the ${car.brand} ${car.model} - an excellent choice! This ${car.year} model offers great value and performance. What would you like to know about it?`;
                     }
                 } else if (result.type === 'location') {
                     const location = result.value.charAt(0).toUpperCase() + result.value.slice(1);
@@ -322,14 +391,15 @@
                     conversationContext.lastTopic = 'location';
                     quickReplies = matchedCars.map(car => `${car.brand} ${car.model}`);
                     if (matchedCars.length > 0) {
-                        return `Available cars in ${location}: ${matchedCars.map(car => `${car.brand} ${car.model}`).join(', ')}. Which one would you like to know about?`;
+                        return `🏙️ Available cars in ${location}: ${matchedCars.map(car => `${car.brand} ${car.model}`).join(', ')}. Which vehicle catches your interest?`;
                     } else {
-                        return `No cars are available in ${location}. Try another location like Colombo, Kalutara, or Negombo, or contact us for assistance: ${companyDetails.contact}`;
+                        return `📍 Unfortunately, no cars are currently available in ${location}. However, we have vehicles in Colombo, Kalutara, and Negombo. We can also arrange delivery to your location!`;
                     }
                 }
             }
+            
             quickReplies = ['Contact Info', 'Our Services'];
-            return "Please specify a car or location to learn more about our vehicles.";
+            return "🤔 I'd love to help you find the perfect car! Please specify which vehicle or location you're interested in, and I'll provide detailed information.";
         }
 
         // Send message

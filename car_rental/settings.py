@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import os
 
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -87,7 +87,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Media files (uploads) - CORRECTED
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR, 'media' # Use Path object consistently
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Use Path object consistently
 
 # Email settings for development
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -527,7 +528,7 @@
             flex: 1;
             position: relative;
             min-height: 100vh;
-            background: url('media/cars/bmw.jpg') no-repeat center center/cover;
+            background: url("{% static 'cars/bmw.jpg' %}") no-repeat center center/cover;
             display: flex;
             align-items: center;
             justify-content: center;

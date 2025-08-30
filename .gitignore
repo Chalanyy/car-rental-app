@@ -1,44 +1,26 @@
-# Create .gitignore file
-cat > .gitignore << EOF
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
 # Django
 *.log
+*.pot
+*.pyc
+__pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
-# Static files
-/static/
-/media/
+# Virtual Environment
+mycar_env/
+venv/
+env/
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
+# Media files
+media/
+
+# Static files
+staticfiles/
+
+# Environment variables
+.env
 
 # OS
 .DS_Store
 Thumbs.db
-EOF
-
-# Add these to your .gitignore:
-mycar_env/
-__pycache__/
-*.pyc
-*.pyo
-db.sqlite3
-.env
-media/
-staticfiles/

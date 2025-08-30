@@ -58,11 +58,18 @@
             align-items: center;
             text-decoration: none;
             transition: opacity 0.3s ease;
+            gap:0.5rem;
         }
 
         .logo:hover {
             opacity: 0.8;
         }
+
+        .logo-img {
+            width: 60px;
+            height: auto;
+            max-height: 60px; /* Prevent oversized images */
+}
 
         .logo h1 {
             font-size: 2.4rem;
@@ -509,7 +516,7 @@
     <header class="header">
         <div class="header-content">
             <a href="{% url 'cars:car_list' %}" class="logo">
-                <img src="{{ MEDIA_URL }}cars/Logo.png" alt="GoRy" class="logo-img" style="width:60px; height:auto;">
+                <img src="{% static 'cars/logo.png' %}" alt="GoRy" class="logo-img">
 
                 <h1>GoRydz</h1>
             </a>

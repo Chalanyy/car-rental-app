@@ -21,6 +21,8 @@ INSTALLED_APPS = [
     'car_rental',
     'rest_framework',
     'chatbot',
+    'polls',
+    'django_extensions',
     
 ]
 

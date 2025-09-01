@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from django.views.generic import ListView, DetailView, TemplateView
-from .models import Car, Booking, Payment
+from cars.models import Car, Booking, Payment
 from datetime import datetime
 from decimal import Decimal
 

@@ -14,7 +14,7 @@ urlpatterns = [
     path('about/', views.about_view, name='about'),
     path('contact/', views.contact, name='contact'),
     path('services/', views.services, name='services'),
-path('login/', views.login_view, name='login'),
+    path('login/', views.login_view, name='login'),
     path('profile/', views.profile, name='my_profile'),
     path('profile/<str:username>/', views.profile, name='profile'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
@@ -22,4 +22,5 @@ path('login/', views.login_view, name='login'),
     path('logout/', LogoutView.as_view(next_page='cars:home'), name='logout'),
     path('payments/', views.payment_list, name='payment_list'),
     path('receipts/', views.receipt_list, name='receipt_list'),
+    
 ]

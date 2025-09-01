@@ -6,7 +6,7 @@ from chatbot.views import chat_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('cars.urls')),
+    path('', include('cars.urls', namespace='cars')),
     path('chat/', chat_view, name='chat'),
 ]
 if settings.DEBUG:

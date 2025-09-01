@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Car, CarImage, Booking
+from cars.models import Car, CarImage, Booking
 
 class CarImageInline(admin.TabularInline):
     model = CarImage
@@ -11,8 +11,6 @@ class CarAdmin(admin.ModelAdmin):
     search_fields = ['name', 'brand', 'location']
     inlines = [CarImageInline]
 
-<<<<<<< HEAD:admin.py
-=======
     fieldsets = (
         ('Basic Information', {
             'fields': ('name', 'brand', 'year', 'description')
@@ -33,6 +31,5 @@ class ReviewAdmin(admin.ModelAdmin):
     list_filter = ['created_at']
     search_fields = ['name', 'comment']
 
->>>>>>> dd36fd5 (Updated car details and added passenger info):cars/admin.py
 admin.site.register(Car, CarAdmin)
 admin.site.register(Booking)

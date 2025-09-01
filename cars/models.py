@@ -1,3 +1,4 @@
+# D:\mycar\cars\models.py
 from django.db import models
 
 class Car(models.Model):
@@ -15,14 +16,19 @@ class Car(models.Model):
     def __str__(self):
         return f"{self.brand} {self.name}"
 
+    class Meta:
+        app_label = 'cars'
+
 class CarImage(models.Model):
     car = models.ForeignKey(Car, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='cars/')
-        
+    
     def __str__(self):
         return f"Image for {self.car.name}"
 
-# Single Booking model - combining both your versions
+    class Meta:
+        app_label = 'cars'
+
 class Booking(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     customer_name = models.CharField(max_length=100)
@@ -31,22 +37,27 @@ class Booking(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    is_paid = models.BooleanField(default=False)  # This is what your views.py uses
+    is_paid = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.customer_name} - {self.car.name}"
 
+    class Meta:
+        app_label = 'cars'
+
 class Payment(models.Model):
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name="payment")
     cardholder_name = models.CharField(max_length=100)
-    card_last4 = models.CharField(max_length=4)  # store only last 4
+    card_last4 = models.CharField(max_length=4)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Payment for booking #{self.booking.id}"
-    
+
+    class Meta:
+        app_label = 'cars'
 
 class Review(models.Model):
     name = models.CharField(max_length=100)
@@ -55,3 +66,6 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.comment[:20]}"
+
+    class Meta:
+        app_label = 'cars'

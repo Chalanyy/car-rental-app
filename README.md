@@ -31,4 +31,13 @@ A website where people can rent cars online.
 - Chat page - ask questions to AI
 - Contact page - get in touch
 
-This is a college project for learning purposes.
+<img width="994" height="469" alt="Screenshot 2025-11-27 150938" src="https://github.com/user-attachments/assets/21445e01-679e-46b6-8ccf-7ea294f6a4c5" />
+<img width="996" height="478" alt="Screenshot 2025-11-27 151019" src="https://github.com/user-attachments/assets/7d450069-5fce-4f82-82ed-c821ed889c7e" />
+<img width="992" height="479" alt="Screenshot 2025-11-27 151033" src="https://github.com/user-attachments/assets/b9ca7066-8108-4127-841f-dd0b0c1b9774" />
+
+<img width="991" height="463" alt="Screenshot 2025-11-27 151049" src="https://github.com/user-attachments/assets/80656a0d-a1b5-4771-8df1-b01537d7120d" />
+<img width="996" height="463" alt="Screenshot 2025-11-27 151108" src="https://github.com/user-attachments/assets/d9e89525-da1b-4c73-86ef-c37105b30ede" />
+<img width="993" height="456" alt="Screenshot 2025-11-27 151123" src="https://github.com/user-attachments/assets/d59814fc-92a2-421e-917d-41242dc95466" />
+
+
+
